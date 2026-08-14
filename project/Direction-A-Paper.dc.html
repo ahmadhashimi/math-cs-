@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="page">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#F4F0E6;}
+  a{color:#B3402E;text-decoration:none;border-bottom:1px solid rgba(179,64,46,.35);}
+  a:hover{color:#8E2E20;border-bottom-color:#8E2E20;}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#F4F0E6;font-family:Spectral,Georgia,serif;color:#1B1917;padding:64px 40px 96px;">
+<div style="max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:48px;">
+
+  <header style="display:flex;flex-direction:column;gap:14px;border-bottom:1px solid #DDD6C6;padding-bottom:28px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8A8275;">
+      <span>Track 04 · Precalculus</span>
+      <span>Lesson 12 of 19</span>
+    </div>
+    <h1 style="margin:0;font-size:66px;line-height:1;font-weight:700;letter-spacing:-.02em;">Logarithms</h1>
+    <p style="margin:0;font-size:20px;line-height:1.5;color:#6B655C;max-width:56ch;font-style:italic;">The single most useful function in computer science, and the one almost everybody skipped.</p>
+  </header>
+
+  <section style="display:grid;grid-template-columns:150px 1fr;gap:28px;align-items:start;background:#EDE7D8;border:1px solid #DDD6C6;padding:28px 30px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#B3402E;line-height:1.6;">Why you<br>need this</div>
+    <p style="margin:0;font-size:19px;line-height:1.65;">Every time you halve a problem instead of walking through it, a logarithm shows up in the running time. Binary search, balanced trees, merge sort, heap operations, the depth of a divide-and-conquer recursion: all of them are <span style="font-family:'JetBrains Mono',monospace;font-size:16px;background:#F4F0E6;padding:2px 6px;border:1px solid #DDD6C6;">O(log n)</span>. If you understand what a logarithm counts, you can read those running times off the algorithm without doing any algebra.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:20px;">
+    <h2 style="margin:0;font-size:15px;font-family:'JetBrains Mono',monospace;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#8A8275;">The idea in one sentence</h2>
+    <p style="margin:0;font-size:26px;line-height:1.5;max-width:44ch;">A logarithm asks a counting question: <em>how many times do I multiply the base by itself to get here?</em></p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <div style="background:#FBF9F2;border:1px solid #DDD6C6;padding:22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8275;">Definition</div>
+        <div style="font-size:24px;">log<sub style="font-size:14px;">b</sub>(x) = y &nbsp;⟺&nbsp; b<sup style="font-size:14px;">y</sup> = x</div>
+        <div style="font-size:15px;line-height:1.5;color:#6B655C;">Same fact, two directions.</div>
+      </div>
+      <div style="background:#FBF9F2;border:1px solid #DDD6C6;padding:22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8275;">Product rule</div>
+        <div style="font-size:24px;">log(xy) = log x + log y</div>
+        <div style="font-size:15px;line-height:1.5;color:#6B655C;">Multiplication becomes addition.</div>
+      </div>
+      <div style="background:#FBF9F2;border:1px solid #DDD6C6;padding:22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8275;">Change of base</div>
+        <div style="font-size:24px;">log<sub style="font-size:14px;">b</sub>x = ln x / ln b</div>
+        <div style="font-size:15px;line-height:1.5;color:#6B655C;">Why Big-O ignores the base.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#FBF9F2;border:1px solid #DDD6C6;padding:30px;display:flex;flex-direction:column;gap:22px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#B3402E;">Try it</div>
+        <div style="font-size:22px;">Find <strong>41</strong> in a sorted list of 64. Halve, don't walk.</div>
+      </div>
+      <div style="display:flex;gap:28px;font-family:'JetBrains Mono',monospace;">
+        <div style="display:flex;flex-direction:column;gap:4px;"><span style="font-size:11px;letter-spacing:.1em;color:#8A8275;">STEPS</span><span style="font-size:32px;line-height:1;">{{ steps }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:4px;"><span style="font-size:11px;letter-spacing:.1em;color:#8A8275;">LEFT</span><span style="font-size:32px;line-height:1;">{{ remaining }}</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:3px;align-items:flex-end;height:44px;">
+      <sc-for list="{{ cells }}" as="c" hint-placeholder-count="64">
+        <div style="{{ c.style }}"></div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <button onClick="{{ step }}" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;background:#1B1917;color:#F4F0E6;border:none;padding:13px 26px;cursor:pointer;" style-hover="background:#B3402E;">Halve it</button>
+      <button onClick="{{ reset }}" style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:#6B655C;border:1px solid #DDD6C6;padding:13px 22px;cursor:pointer;" style-hover="color:#1B1917;border-color:#1B1917;">Reset</button>
+      <span style="font-size:17px;color:#6B655C;font-style:italic;">{{ demoNote }}</span>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:18px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8A8275;">Check yourself</div>
+    <p style="margin:0;font-size:24px;line-height:1.45;max-width:48ch;">A sorted array holds 1,048,576 records. What is the worst-case number of comparisons a binary search makes?</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+      <sc-for list="{{ options }}" as="o" hint-placeholder-count="4">
+        <button onClick="{{ o.click }}" style="{{ o.style }}">{{ o.label }}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ answered }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ feedbackStyle }}">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;">{{ verdict }}</div>
+        <p style="margin:0;font-size:18px;line-height:1.6;">Each comparison throws away half the array, so the count is how many halvings reduce 1,048,576 to 1. That is log₂(1,048,576) = 20, because 2²⁰ = 1,048,576. A linear scan would take up to a million comparisons for the same answer.</p>
+      </div>
+    </sc-if>
+  </section>
+
+  <footer style="border-top:1px solid #DDD6C6;padding-top:24px;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:13px;color:#8A8275;">
+    <span>← Exponential growth</span>
+    <span style="color:#B3402E;">Next: Sequences &amp; series →</span>
+  </footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showCsPayoff&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#B3402E&quot;,&quot;options&quot;:[&quot;#B3402E&quot;,&quot;#3F6B4A&quot;,&quot;#2F5170&quot;,&quot;#7A4E86&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { lo: 0, hi: 63, steps: 0, picked: null };
+  target = 41;
+  step = () => this.setState(s => {
+    if (s.lo >= s.hi) return null;
+    const mid = Math.floor((s.lo + s.hi) / 2);
+    return mid < this.target ? { lo: mid + 1, steps: s.steps + 1 } : { hi: mid, steps: s.steps + 1 };
+  });
+  reset = () => this.setState({ lo: 0, hi: 63, steps: 0 });
+  renderVals() {
+    const { lo, hi, steps, picked } = this.state;
+    const done = lo === hi;
+    const cells = [];
+    for (let i = 0; i < 64; i++) {
+      const inR = i >= lo && i <= hi;
+      const isT = i === this.target;
+      const bg = done && isT ? '#B3402E' : inR ? (isT ? '#8E7B5E' : '#3A3630') : '#DDD6C6';
+      cells.push({ key: i, style: `flex:1;height:${inR ? 40 : 12}px;background:${bg};transition:height .35s cubic-bezier(.4,0,.2,1),background .35s ease;` });
+    }
+    const labels = ['20', '512', '1,024', '1,000,000'];
+    const options = labels.map((label, i) => {
+      let bg = '#FBF9F2', bd = '#DDD6C6', col = '#1B1917';
+      if (picked !== null) {
+        if (i === 0) { bg = '#EAF0E4'; bd = '#7C8F63'; }
+        else if (i === picked) { bg = '#F7E7E3'; bd = '#B3402E'; col = '#8E2E20'; }
+        else { col = '#A9A296'; }
+      }
+      return { key: i, label, click: () => this.setState({ picked: i }),
+        style: `font-family:Spectral,Georgia,serif;font-size:22px;padding:20px 12px;background:${bg};border:1px solid ${bd};color:${col};cursor:pointer;transition:all .2s ease;` };
+    });
+    return { cells, steps, remaining: hi - lo + 1, step: this.step, reset: this.reset, options,
+      demoNote: done ? `Found it. ${steps} comparisons out of 64 items — that is log₂(64).` : 'Each press discards half the remaining range.',
+      answered: picked !== null,
+      verdict: picked === 0 ? 'Correct' : 'Not quite',
+      feedbackStyle: `background:${picked === 0 ? '#EAF0E4' : '#F7E7E3'};border-left:3px solid ${picked === 0 ? '#7C8F63' : '#B3402E'};padding:22px 26px;color:#1B1917;` };
+  }
+}
+</script>
+</body>
+</html>

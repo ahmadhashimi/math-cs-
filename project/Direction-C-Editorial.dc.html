@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="page">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#FBFAF8;}
+  a{color:oklch(0.52 0.19 258);text-decoration:none;}
+  a:hover{color:oklch(0.42 0.19 258);}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#FBFAF8;font-family:'Space Grotesk',system-ui,sans-serif;color:#14161A;">
+
+  <div style="background:oklch(0.52 0.19 258);color:#fff;padding:0 44px;">
+    <div style="max-width:1000px;margin:0 auto;padding:52px 0 56px;display:flex;flex-direction:column;gap:20px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;opacity:.72;">
+        <span>Precalculus · Lesson 12</span><span>11 of 19 complete</span>
+      </div>
+      <h1 style="margin:0;font-size:84px;line-height:.92;font-weight:700;letter-spacing:-.045em;">Logarithms</h1>
+      <p style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:23px;line-height:1.5;max-width:52ch;opacity:.9;">The single most useful function in computer science, and the one almost everybody skipped.</p>
+    </div>
+  </div>
+
+<div style="max-width:1000px;margin:0 auto;padding:56px 44px 100px;display:flex;flex-direction:column;gap:56px;">
+
+  <section style="display:grid;grid-template-columns:1fr 1.6fr;gap:36px;align-items:start;">
+    <h2 style="margin:0;font-size:15px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.62 0.17 55);line-height:1.6;">Why a CS<br>major needs this</h2>
+    <p style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:21px;line-height:1.65;color:#2A2E35;">Every time you halve a problem instead of walking through it, a logarithm shows up in the running time. Binary search, balanced trees, merge sort, heap operations, the depth of a divide-and-conquer recursion are all <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;background:oklch(0.94 0.05 258);padding:2px 8px;border-radius:4px;">O(log n)</span>. Understand what a logarithm counts and you can read those running times straight off the algorithm.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:26px;">
+    <p style="margin:0;font-size:36px;line-height:1.28;font-weight:500;letter-spacing:-.025em;max-width:38ch;">A logarithm asks a counting question: <span style="color:oklch(0.52 0.19 258);">how many times do I multiply the base by itself to get here?</span></p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+      <div style="background:#fff;border-radius:14px;padding:26px 24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 3px rgba(20,22,26,.07),0 8px 24px -12px rgba(20,22,26,.16);">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.62 0.17 55);">Definition</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:26px;">log<sub style="font-size:15px;">b</sub>(x) = y ⟺ b<sup style="font-size:15px;">y</sup> = x</div>
+        <div style="font-size:14px;line-height:1.5;color:#666D78;">Same fact, two directions.</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:26px 24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 3px rgba(20,22,26,.07),0 8px 24px -12px rgba(20,22,26,.16);">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.62 0.17 55);">Product rule</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:26px;">log(xy) = log x + log y</div>
+        <div style="font-size:14px;line-height:1.5;color:#666D78;">Multiplication becomes addition.</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:26px 24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 3px rgba(20,22,26,.07),0 8px 24px -12px rgba(20,22,26,.16);">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.62 0.17 55);">Change of base</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:26px;">log<sub style="font-size:15px;">b</sub>x = ln x / ln b</div>
+        <div style="font-size:14px;line-height:1.5;color:#666D78;">Why Big-O ignores the base.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#14161A;color:#fff;border-radius:18px;padding:34px;display:flex;flex-direction:column;gap:26px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.72 0.16 55);">Try it</div>
+        <div style="font-size:24px;font-weight:500;letter-spacing:-.02em;">Find 41 in a sorted list of 64. Halve, don't walk.</div>
+      </div>
+      <div style="display:flex;gap:30px;">
+        <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;font-weight:600;letter-spacing:.16em;color:#7B838F;">STEPS</span><span style="font-size:38px;line-height:1;font-weight:600;">{{ steps }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;font-weight:600;letter-spacing:.16em;color:#7B838F;">LEFT</span><span style="font-size:38px;line-height:1;font-weight:600;color:oklch(0.72 0.16 55);">{{ remaining }}</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:3px;align-items:flex-end;height:48px;">
+      <sc-for list="{{ cells }}" as="c" hint-placeholder-count="64">
+        <div style="{{ c.style }}"></div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <button onClick="{{ step }}" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;background:#fff;color:#14161A;border:none;border-radius:100px;padding:14px 30px;cursor:pointer;" style-hover="background:oklch(0.72 0.16 55);color:#14161A;">Halve it</button>
+      <button onClick="{{ reset }}" style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;background:transparent;color:#9AA2AC;border:1px solid #333941;border-radius:100px;padding:14px 24px;cursor:pointer;" style-hover="color:#fff;border-color:#6B7280;">Reset</button>
+      <span style="font-size:15px;color:#9AA2AC;">{{ demoNote }}</span>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:20px;">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.62 0.17 55);">Check yourself</div>
+    <p style="margin:0;font-size:28px;line-height:1.35;font-weight:500;letter-spacing:-.02em;max-width:46ch;">A sorted array holds 1,048,576 records. What is the worst-case number of comparisons a binary search makes?</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+      <sc-for list="{{ options }}" as="o" hint-placeholder-count="4">
+        <button onClick="{{ o.click }}" style="{{ o.style }}">{{ o.label }}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ answered }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ feedbackStyle }}">
+        <div style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;">{{ verdict }}</div>
+        <p style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:19px;line-height:1.65;color:#2A2E35;">Each comparison throws away half the array, so the count is how many halvings reduce 1,048,576 to 1: log₂(1,048,576) = 20, because 2²⁰ = 1,048,576. A linear scan would take up to a million comparisons for the same answer.</p>
+      </div>
+    </sc-if>
+  </section>
+
+  <footer style="border-top:1px solid #E6E3DE;padding-top:26px;display:flex;justify-content:space-between;font-size:15px;font-weight:500;color:#666D78;">
+    <span>← Exponential growth</span>
+    <span style="color:oklch(0.52 0.19 258);">Next: Sequences &amp; series →</span>
+  </footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showCsPayoff&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;oklch(0.52 0.19 258)&quot;,&quot;options&quot;:[&quot;oklch(0.52 0.19 258)&quot;,&quot;oklch(0.5 0.16 155)&quot;,&quot;oklch(0.5 0.2 20)&quot;,&quot;oklch(0.45 0.15 300)&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { lo: 0, hi: 63, steps: 0, picked: null };
+  target = 41;
+  step = () => this.setState(s => {
+    if (s.lo >= s.hi) return null;
+    const mid = Math.floor((s.lo + s.hi) / 2);
+    return mid < this.target ? { lo: mid + 1, steps: s.steps + 1 } : { hi: mid, steps: s.steps + 1 };
+  });
+  reset = () => this.setState({ lo: 0, hi: 63, steps: 0 });
+  renderVals() {
+    const { lo, hi, steps, picked } = this.state;
+    const done = lo === hi;
+    const warm = 'oklch(0.72 0.16 55)';
+    const cells = [];
+    for (let i = 0; i < 64; i++) {
+      const inR = i >= lo && i <= hi;
+      const isT = i === this.target;
+      const bg = done && isT ? warm : inR ? (isT ? 'oklch(0.5 0.12 55)' : '#EDEFF2') : '#2A2E35';
+      cells.push({ key: i, style: `flex:1;height:${inR ? 44 : 10}px;background:${bg};border-radius:3px;transition:height .35s cubic-bezier(.4,0,.2,1),background .35s ease;` });
+    }
+    const labels = ['20', '512', '1,024', '1,000,000'];
+    const options = labels.map((label, i) => {
+      let bg = '#fff', bd = '#E6E3DE', col = '#14161A';
+      if (picked !== null) {
+        if (i === 0) { bg = 'oklch(0.95 0.06 152)'; bd = 'oklch(0.62 0.15 152)'; col = 'oklch(0.42 0.14 152)'; }
+        else if (i === picked) { bg = 'oklch(0.95 0.05 25)'; bd = 'oklch(0.62 0.19 25)'; col = 'oklch(0.5 0.19 25)'; }
+        else { col = '#A8AEB6'; }
+      }
+      return { key: i, label, click: () => this.setState({ picked: i }),
+        style: `font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;padding:22px 12px;background:${bg};border:1.5px solid ${bd};border-radius:12px;color:${col};cursor:pointer;transition:all .2s ease;` };
+    });
+    return { cells, steps, remaining: hi - lo + 1, step: this.step, reset: this.reset, options,
+      demoNote: done ? `Found it — ${steps} comparisons over 64 items, which is log₂(64).` : 'Each press discards half the remaining range.',
+      answered: picked !== null,
+      verdict: picked === 0 ? 'Correct' : 'Not quite',
+      feedbackStyle: `background:${picked === 0 ? 'oklch(0.97 0.03 152)' : 'oklch(0.97 0.025 25)'};border-radius:14px;padding:26px 28px;color:${picked === 0 ? 'oklch(0.42 0.14 152)' : 'oklch(0.5 0.19 25)'};` };
+  }
+}
+</script>
+</body>
+</html>

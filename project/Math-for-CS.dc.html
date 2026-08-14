@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#0B0C0E;}
+  ::selection{background:oklch(0.86 0.19 165);color:#04140B;}
+  a{color:oklch(0.86 0.19 165);text-decoration:none;}
+  a:hover{color:oklch(0.92 0.19 165);}
+  input{font-family:'IBM Plex Mono',monospace;}
+  input:focus{outline:none;}
+  *::-webkit-scrollbar{width:10px;height:10px}
+  *::-webkit-scrollbar-thumb{background:#232830;border-radius:6px}
+  *::-webkit-scrollbar-track{background:transparent}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  html.mfcs-light{background:#F4F3F1;}
+  html.mfcs-light body{background:#F4F3F1;}
+  html.mfcs-light body>div{filter:invert(1) hue-rotate(180deg);}
+  html.mfcs-light body>div img,html.mfcs-light body>div svg image{filter:invert(1) hue-rotate(180deg);}
+  @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.28)}100%{transform:scale(1)}}
+  @keyframes draw{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+  [data-stagger]>section,[data-stagger]>div{animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+  [data-stagger]>*:nth-child(1){animation-delay:.02s}
+  [data-stagger]>*:nth-child(2){animation-delay:.06s}
+  [data-stagger]>*:nth-child(3){animation-delay:.10s}
+  [data-stagger]>*:nth-child(4){animation-delay:.14s}
+  [data-stagger]>*:nth-child(5){animation-delay:.18s}
+  [data-stagger]>*:nth-child(6){animation-delay:.22s}
+  [data-stagger]>*:nth-child(7){animation-delay:.26s}
+  [data-stagger]>*:nth-child(n+8){animation-delay:.3s}
+  @media print{
+    html,body{background:#fff !important;}
+    [data-noprint]{display:none !important;}
+    [data-sheet]{color:#000 !important;background:#fff !important;}
+    [data-sheet] *{color:#000 !important;background:transparent !important;border-color:#bbb !important;}
+  }
+</style>
+</helmet>
+<sc-if value="{{ shieldOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:99;background:rgba(11,12,14,.55);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);display:flex;align-items:center;justify-content:center;animation:rise .2s ease both;">
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;max-width:440px;padding:36px;background:#111418;border:1px solid #2A2317;border-top:3px solid #E8C555;border-radius:10px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#E8C555;">{{ shieldTitle }}</div>
+      <p style="margin:0;font-size:16px;line-height:1.6;color:#C6CCD4;">{{ shieldMsg }}</p>
+      <button onClick="{{ shieldDismiss }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:#E8C555;color:#14110C;border:none;border-radius:5px;padding:11px 24px;cursor:pointer;margin-top:6px;">I understand</button>
+    </div>
+  </div>
+</sc-if>
+<div style="{{ appShellStyle }}">
+
+  <aside data-noprint="1" style="background:#0E1013;border-right:1px solid #1D2126;height:100vh;position:sticky;top:0;display:flex;flex-direction:column;">
+    <div style="padding:24px 22px 20px;border-bottom:1px solid #1D2126;display:flex;flex-direction:column;gap:18px;">
+      <button onClick="{{ showHome }}" style="display:flex;flex-direction:column;gap:4px;background:transparent;border:none;padding:0;cursor:pointer;text-align:left;">
+        <div style="font-size:17px;font-weight:600;letter-spacing:-.02em;color:#E7E9EC;">Math for a CS Degree</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6E7681;">by Mujtaba Hashimi</div>
+      </button>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="position:relative;width:46px;height:46px;flex:none;">
+          <svg width="46" height="46" viewBox="0 0 46 46" style="transform:rotate(-90deg);">
+            <circle cx="23" cy="23" r="19" fill="none" stroke="#1D2126" stroke-width="4"></circle>
+            <circle cx="23" cy="23" r="19" fill="none" stroke="oklch(0.86 0.19 165)" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{ ringDash }}" style="transition:stroke-dasharray .6s cubic-bezier(.4,0,.2,1);"></circle>
+          </svg>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:oklch(0.86 0.19 165);">{{ doneCount }} / {{ totalCount }}</div>
+          <div style="font-size:12px;color:#6E7681;">lessons complete</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4A525C;">
+        <span>{{ statTracks }} tracks</span><span>{{ statFormulas }} formulas</span><span>{{ statDrills }} drills</span>
+      </div>
+    </div>
+
+    <nav style="flex:1;overflow-y:auto;padding:10px 12px 24px;display:flex;flex-direction:column;gap:2px;">
+      <sc-for list="{{ trackViews }}" as="t" hint-placeholder-count="10">
+        <div style="display:flex;flex-direction:column;">
+          <button onClick="{{ t.toggle }}" style="{{ t.headStyle }}">
+            <span style="{{ t.caretStyle }}">▸</span>
+            <span style="flex:1;text-align:left;">{{ t.n }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5A626C;">{{ t.frac }}</span>
+          </button>
+          <sc-if value="{{ t.open }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ t.startExam }}" style="display:flex;align-items:center;gap:10px;width:100%;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8A7A3C;background:transparent;border:none;border-radius:6px;padding:8px 10px 8px 28px;cursor:pointer;text-align:left;" style-hover="color:#E8C555;">Take the {{ t.n }} exam →</button>
+          </sc-if>
+          <sc-if value="{{ t.open }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 8px 0;">
+              <sc-for list="{{ t.items }}" as="l" hint-placeholder-count="4">
+                <button onClick="{{ l.click }}" style="{{ l.style }}">
+                  <span style="{{ l.dotStyle }}"></span>
+                  <span style="flex:1;text-align:left;">{{ l.title }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </nav>
+
+    <div style="border-top:1px solid #1D2126;padding:12px;display:flex;gap:8px;">
+      <button onClick="{{ showHome }}" style="{{ homeBtnStyle }}">Overview</button>
+      <button onClick="{{ showSheet }}" style="{{ sheetBtnStyle }}">Formulas</button>
+      <button onClick="{{ toggleTheme }}" title="Toggle light and dark" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #1D2126;border-radius:5px;padding:10px 12px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#333941;">{{ themeIcon }}</button>
+      <button onClick="{{ resetProgress }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:transparent;color:#5A626C;border:1px solid #1D2126;border-radius:5px;padding:10px 12px;cursor:pointer;" style-hover="color:#9AA2AC;border-color:#333941;">Reset</button>
+    </div>
+  </aside>
+
+  <main style="min-width:0;">
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:1000px;margin:0 auto;padding:64px 56px 120px;display:flex;flex-direction:column;gap:52px;animation:rise .5s cubic-bezier(.2,.7,.3,1) both;">
+        <header style="display:flex;flex-direction:column;gap:18px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:oklch(0.86 0.19 165);">Math for a CS Degree · by Mujtaba Hashimi · Fannos Academy</div>
+          <h1 style="margin:0;font-size:78px;line-height:1.02;font-weight:600;letter-spacing:-.04em;max-width:15ch;">Start at <em style="font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-weight:500;color:oklch(0.86 0.19 165);">arithmetic</em>. Finish at <em style="font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-weight:500;color:oklch(0.86 0.19 165);">AI</em>.</h1>
+          <p style="margin:0;font-size:20px;line-height:1.6;color:#9AA2AC;max-width:62ch;">Thirteen tracks in strict order: pre-algebra through calculus, discrete math through cryptography, ending at the mathematics a neural network actually runs on. Built for someone who did some high school math a while ago and needs to pass the real courses.</p>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;">
+            <span style="color:#E8C555;border:1px solid #3A3320;border-radius:100px;padding:6px 14px;">Proprietary course</span>
+            <span style="color:#5A626C;">Licensed to a single learner · not for redistribution</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#5A626C;flex-wrap:wrap;">
+            <span style="color:#9AA2AC;">The rule:</span><span>learn</span><span style="color:#333941;">→</span><span>drill</span><span style="color:#333941;">→</span><span>pass the exam</span><span style="color:#333941;">→</span><span style="color:oklch(0.86 0.19 165);">unlock the next track</span><span style="color:#333941;">·</span><span style="color:#E8C555;">fail three times and you redo the lessons</span>
+          </div>
+        </header>
+
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+          <sc-for list="{{ homeStats }}" as="s" hint-placeholder-count="5">
+            <div style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:7px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:30px;line-height:1;color:oklch(0.86 0.19 165);">{{ s.n }}</div>
+              <div style="font-size:13px;color:#8A929C;">{{ s.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <section style="display:flex;flex-direction:column;gap:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;">
+            <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">The mental model</h2>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5A626C;">Eight ideas reappear across every track. Click any lesson to jump.</span>
+          </div>
+          <p style="margin:0;font-size:18px;line-height:1.65;color:#9AA2AC;max-width:70ch;">A degree taught track by track hides the fact that the same few moves keep returning under new names. Halving is the same idea in an exponent, a logarithm, a binary search and a balanced tree. Recognising a returning move is what turns thirteen subjects into one.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ threads }}" as="th" hint-placeholder-count="8">
+              <div style="{{ th.style }}">
+                <button onClick="{{ th.toggle }}" style="{{ th.headStyle }}">
+                  <span style="{{ th.caret }}">▸</span>
+                  <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;text-align:left;">
+                    <span style="font-size:17px;font-weight:600;">{{ th.n }}</span>
+                    <span style="font-size:14.5px;color:#8A929C;line-height:1.5;">{{ th.line }}</span>
+                  </div>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4A525C;flex:none;">{{ th.count }}</span>
+                </button>
+                <sc-if value="{{ th.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:14px;padding:0 22px 22px 46px;animation:rise .3s ease both;">
+                    <p style="margin:0;font-size:16px;line-height:1.7;color:#C6CCD4;max-width:72ch;">{{ th.why }}</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                      <sc-for list="{{ th.steps }}" as="st" hint-placeholder-count="6">
+                        <button onClick="{{ st.click }}" style="{{ st.style }}">
+                          <span style="color:#E7E9EC;">{{ st.title }}</span>
+                          <span style="color:#6E7681;">{{ st.note }}</span>
+                        </button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="display:flex;flex-direction:column;gap:16px;">
+          <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">What every lesson contains</h2>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <sc-for list="{{ homeParts }}" as="p" hint-placeholder-count="6">
+              <div style="display:flex;flex-direction:column;gap:8px;padding:20px;background:#111418;border:1px solid #1D2126;border-radius:8px;">
+                <div style="{{ p.tagStyle }}">{{ p.tag }}</div>
+                <div style="font-size:15px;font-weight:600;">{{ p.title }}</div>
+                <div style="font-size:14px;line-height:1.55;color:#8A929C;">{{ p.body }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;">
+            <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">The sequence</h2>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5A626C;">Each track unlocks when you pass the one before it</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <sc-for list="{{ homeTracks }}" as="t" hint-placeholder-count="13">
+              <div style="{{ t.style }}">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#4A525C;width:26px;flex:none;">{{ t.num }}</span>
+                <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;">
+                  <div style="font-size:17px;font-weight:600;">{{ t.n }}</div>
+                  <div style="font-size:14px;color:#7C838C;">{{ t.subLine }}</div>
+                </div>
+                <div style="width:110px;flex:none;display:flex;flex-direction:column;gap:6px;">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5A626C;">{{ t.frac }} done</div>
+                  <div style="height:3px;background:#1D2126;border-radius:2px;overflow:hidden;"><div style="{{ t.bar }}"></div></div>
+                </div>
+                <button onClick="{{ t.open }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:9px 16px;cursor:pointer;flex:none;" style-hover="color:#E7E9EC;border-color:#4A525C;">Open</button>
+                <button onClick="{{ t.exam }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:transparent;color:#E8C555;border:1px solid #3A3320;border-radius:5px;padding:9px 16px;cursor:pointer;flex:none;" style-hover="background:#E8C555;color:#14110C;">Exam</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <sc-if value="{{ hasQueue }}" hint-placeholder-val="{{ false }}">
+          <section style="display:flex;flex-direction:column;gap:16px;padding:26px 28px;background:#14110C;border:1px solid #2A2317;border-radius:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;">
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#E8C555;">Your review queue</div>
+                <div style="font-size:20px;font-weight:600;letter-spacing:-.02em;">{{ queueCount }} waiting on you</div>
+              </div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8A7A3C;">Everything you got wrong, kept until you get it right</span>
+            </div>
+            <p style="margin:0;font-size:15.5px;line-height:1.6;color:#B8AE95;max-width:70ch;">Forgetting is not a character flaw, it is the default. These are the exact lessons where a quiz or a written answer went wrong — they stay on this list across sessions until you return and clear them.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <sc-for list="{{ queueItems }}" as="q" hint-placeholder-count="4">
+                <button onClick="{{ q.click }}" style="{{ q.style }}">
+                  <span style="color:#8A7A3C;font-size:10px;letter-spacing:.14em;text-transform:uppercase;">{{ q.kind }}</span>
+                  <span style="color:#E7E9EC;">{{ q.title }}</span>
+                  <span style="color:#8A7A3C;">{{ q.misses }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </section>
+        </sc-if>
+
+        <section style="{{ finalCardStyle }}">
+          <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:240px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#E8C555;">Final examination</div>
+            <div style="font-size:22px;font-weight:600;letter-spacing:-.02em;">The whole course, one sitting.</div>
+            <div style="font-size:14px;color:#8A929C;">{{ finalNote }}</div>
+          </div>
+          <sc-if value="{{ graduated }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ showCert }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:#E8C555;color:#14110C;border:none;border-radius:6px;padding:14px 26px;cursor:pointer;flex:none;">View certificate</button>
+          </sc-if>
+          <sc-if value="{{ notGraduated }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ startFinal }}" style="{{ finalBtnStyle }}">Sit the final</button>
+          </sc-if>
+        </section>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button onClick="{{ homeContinue }}" style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;background:oklch(0.86 0.19 165);color:#04140B;border:none;border-radius:6px;padding:16px 32px;cursor:pointer;" style-hover="background:oklch(0.92 0.19 165);">{{ homeCtaLabel }}</button>
+          <button onClick="{{ showSheet }}" style="font-family:'IBM Plex Mono',monospace;font-size:14px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:6px;padding:16px 24px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">Formula sheet</button>
+        </div>
+
+        <footer style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid #1D2126;padding-top:22px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4A525C;">Math for a CS Degree by <span style="color:#8A929C;">Mujtaba Hashimi</span> · Fannos Academy · US education system</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#333941;">© 2026 Mujtaba Hashimi · Proprietary — all rights reserved</span>
+        </footer>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isExam }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:860px;margin:0 auto;padding:56px 56px 120px;display:flex;flex-direction:column;gap:36px;animation:rise .45s cubic-bezier(.2,.7,.3,1) both;">
+        <header style="display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #1D2126;padding-bottom:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E8C555;">
+            <span>Objective assessment</span>
+            <span style="{{ exIntegrityStyle }}">{{ exIntegrity }}</span>
+            <span style="color:#6E7681;">{{ exCount }} questions · pass at 70%</span>
+          </div>
+          <h1 style="margin:0;font-size:52px;line-height:1;font-weight:600;letter-spacing:-.03em;">{{ exTitle }}</h1>
+          <p style="margin:0;font-size:17px;color:#9AA2AC;">Every question is drawn from the lessons in this track. Answer them all, then submit for a score and a full review.</p>
+        </header>
+
+        <sc-if value="{{ exScored }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ exResultStyle }}">
+            <div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:62px;line-height:1;font-weight:600;">{{ exPct }}%</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.14em;text-transform:uppercase;">{{ exVerdict }}</span>
+            </div>
+            <p style="margin:10px 0 0;font-size:17px;line-height:1.6;color:#C6CCD4;">{{ exSummary }}</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ exShowCert }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ exCert }}" style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;background:#E8C555;color:#14110C;border:none;border-radius:6px;padding:16px 32px;cursor:pointer;align-self:flex-start;">View your certificate →</button>
+        </sc-if>
+
+        <sc-if value="{{ exRemedial }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#14110C;border:1px solid #2A2317;border-left:3px solid #E8C555;border-radius:8px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#E8C555;">Your review plan · attempt {{ exAttempt }}</div>
+            <p style="margin:0;font-size:17px;line-height:1.65;color:#D8CFB8;">{{ exRemedialNote }}</p>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <sc-for list="{{ exRemedialList }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:12px;font-size:16px;color:#E7E9EC;padding:11px 14px;background:#0F0D08;border:1px solid #2A2317;border-radius:6px;">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A7A3C;">REDO</span>
+                  <span>{{ r.title }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-for list="{{ exQuestions }}" as="q" hint-placeholder-count="8">
+          <div style="{{ q.wrapStyle }}">
+            <div style="display:flex;gap:14px;align-items:baseline;">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5A626C;flex:none;">{{ q.num }}</span>
+              <div style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:0;">
+                <p style="margin:0;font-size:19px;line-height:1.45;font-weight:500;">{{ q.q }}</p>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4A525C;">{{ q.from }}</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:9px;">
+              <sc-for list="{{ q.options }}" as="o" hint-placeholder-count="4">
+                <button onClick="{{ o.click }}" style="{{ o.style }}">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ q.reveal }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0;font-size:15px;line-height:1.65;color:#8A929C;border-left:2px solid #2A3038;padding-left:14px;">{{ q.explain }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-top:1px solid #1D2126;padding-top:24px;">
+          <button onClick="{{ exSubmit }}" style="{{ exSubmitStyle }}">{{ exSubmitLabel }}</button>
+          <button onClick="{{ exBack }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:13px 20px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">Back to lessons</button>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6E7681;">{{ exProgress }}</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCert }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="1" style="max-width:900px;margin:0 auto;padding:64px 56px 120px;display:flex;flex-direction:column;gap:28px;animation:rise .5s ease both;">
+        <div style="border:2px solid #E8C555;border-radius:4px;padding:6px;">
+          <div style="border:1px solid #3A3320;padding:64px 56px;display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;background:linear-gradient(180deg,#111418,#0E1013);">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#E8C555;">Certificate of completion</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#5A626C;">Math for a CS Degree · a proprietary course by Mujtaba Hashimi</div>
+            <div style="font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-size:20px;color:#9AA2AC;">This certifies that the holder has completed</div>
+            <div style="font-size:44px;font-weight:600;letter-spacing:-.03em;line-height:1.1;">Mathematics for a CS Degree <span style="font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-weight:500;color:oklch(0.86 0.19 165);">&amp; AI</span></div>
+            <div style="font-size:15px;line-height:1.6;color:#8A929C;max-width:54ch;">having passed every track examination and the comprehensive final examination at or above the required standard, covering:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:640px;">
+              <sc-for list="{{ certTracks }}" as="t" hint-placeholder-count="13">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#C6CCD4;border:1px solid #2A3038;border-radius:100px;padding:6px 13px;">{{ t.n }}</span>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:60px;margin-top:16px;align-items:flex-end;">
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:center;">
+                <div style="font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-size:22px;color:#E7E9EC;">Mujtaba Hashimi</div>
+                <div style="width:180px;height:1px;background:#333941;"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5A626C;">Fannos Academy · US education system</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:center;">
+                <div style="font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-size:22px;color:#E7E9EC;">{{ certDate }}</div>
+                <div style="width:180px;height:1px;background:#333941;"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#5A626C;">Date of completion</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-noprint="1" style="display:flex;gap:12px;">
+          <button onClick="{{ certPrint }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:#E8C555;color:#14110C;border:none;border-radius:5px;padding:13px 26px;cursor:pointer;">Print certificate</button>
+          <button onClick="{{ showHome }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:13px 20px;cursor:pointer;">Back to overview</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLesson }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ mainStyle }}">
+        <div data-stagger="1" style="max-width:860px;margin:0 auto;padding:56px 56px 120px;display:flex;flex-direction:column;gap:48px;">
+
+          <header style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6E7681;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <button onClick="{{ showHome }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:none;padding:0;color:#5A626C;cursor:pointer;" style-hover="color:#9AA2AC;">Overview</button>
+                <span style="color:#333941;">/</span>
+                <span style="color:oklch(0.86 0.19 165);">{{ crumb }}</span>
+              </div>
+              <span>{{ position }}</span>
+            </div>
+            <h1 style="margin:0;font-size:64px;line-height:1;font-weight:600;letter-spacing:-.035em;">{{ title }}</h1>
+            <p style="margin:6px 0 0;font-size:26px;line-height:1.4;font-weight:400;letter-spacing:-.02em;color:#AEB6C0;max-width:44ch;">{{ idea }}</p>
+            <div style="display:flex;gap:22px;flex-wrap:wrap;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5A626C;">
+              <span>{{ metaRead }}</span><span>{{ metaFormulas }}</span><span>{{ metaDrills }}</span><span>{{ metaQuiz }}</span>
+            </div>
+          </header>
+
+          <div style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #1D2126;padding-bottom:12px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:34px;line-height:1;font-weight:600;color:#232830;">01</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#9AA2AC;">Understand</span>
+            <span style="font-size:15px;color:#5A626C;">Read this once, slowly.</span>
+          </div>
+
+          <section style="background:#111418;border:1px solid #1D2126;border-radius:8px;overflow:hidden;">
+            <div style="background:#15191E;padding:11px 22px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.86 0.19 165);border-bottom:1px solid #1D2126;">// why a CS major needs this</div>
+            <p style="margin:0;padding:24px 22px;font-size:18px;line-height:1.7;color:#C6CCD4;">{{ cs }}</p>
+          </section>
+
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;">
+            <section style="display:flex;flex-direction:column;gap:12px;background:#14110C;border:1px solid #2A2317;border-left:2px solid #E8C555;border-radius:8px;padding:22px 24px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#E8C555;">Fun fact</div>
+              <p style="margin:0;font-size:16px;line-height:1.65;color:#D8CFB8;">{{ fact }}</p>
+            </section>
+            <section style="display:flex;flex-direction:column;gap:12px;background:#0F1216;border:1px solid #1D2126;border-left:2px solid oklch(0.86 0.19 165);border-radius:8px;padding:22px 24px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.86 0.19 165);">Think of it like</div>
+              <p style="margin:0;font-size:16px;line-height:1.65;color:#C6CCD4;">{{ analogy }}</p>
+            </section>
+          </div>
+
+          <sc-if value="{{ hasFable }}" hint-placeholder-val="{{ false }}">
+            <section style="background:linear-gradient(135deg,#12141A,#0E1116);border:1px solid #232830;border-radius:10px;padding:34px 38px;display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8FA0C9;">A fable</span>
+                <span style="flex:1;height:1px;background:#232830;"></span>
+              </div>
+              <p style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-size:19px;line-height:1.85;color:#C9CFDD;">{{ fable }}</p>
+            </section>
+          </sc-if>
+
+          <section style="display:flex;flex-direction:column;gap:18px;">
+            <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">The full explanation</h2>
+            <div style="display:flex;flex-direction:column;gap:20px;max-width:70ch;">
+              <sc-for list="{{ explain }}" as="p" hint-placeholder-count="4">
+                <div style="display:grid;grid-template-columns:30px 1fr;gap:14px;align-items:start;">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#3B434D;padding-top:5px;">{{ p.num }}</div>
+                  <p style="margin:0;font-size:18px;line-height:1.75;color:#C6CCD4;">{{ p.text }}</p>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+
+          <div style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #1D2126;padding-bottom:12px;margin-top:8px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:34px;line-height:1;font-weight:600;color:#232830;">02</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#9AA2AC;">Reference</span>
+            <span style="font-size:15px;color:#5A626C;">Everything worth memorising, in one place.</span>
+          </div>
+
+          <section style="display:flex;flex-direction:column;gap:16px;">
+            <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">Formulas that matter</h2>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+              <sc-for list="{{ formulas }}" as="f" hint-placeholder-count="3">
+                <div style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s ease,transform .2s ease;" style-hover="border-color:#3A4650;transform:translateY(-2px);">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6E7681;">{{ f.label }}</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;line-height:1.4;color:#E7E9EC;">{{ f.expr }}</div>
+                  <div style="font-size:14px;line-height:1.5;color:#8A929C;">{{ f.note }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+
+          <sc-if value="{{ hasCode }}" hint-placeholder-val="{{ false }}">
+            <section style="background:#0B0C0E;border:1px solid #1D2126;border-radius:8px;overflow:hidden;">
+              <div style="background:#111418;padding:11px 22px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5CA8FF;border-bottom:1px solid #1D2126;">// in code</div>
+              <pre style="margin:0;padding:22px;font-family:'IBM Plex Mono',monospace;font-size:14.5px;line-height:1.7;color:#C6CCD4;overflow-x:auto;">{{ code }}</pre>
+            </section>
+          </sc-if>
+
+          <div style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #1D2126;padding-bottom:12px;margin-top:8px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:34px;line-height:1;font-weight:600;color:#232830;">03</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#9AA2AC;">Practice</span>
+            <span style="font-size:15px;color:#5A626C;">You do not know it until you can do it.</span>
+          </div>
+
+          <section style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E8C555;">Play it</div>
+                <div style="font-size:19px;font-weight:500;">Match each formula to what it means. Fewest moves wins.</div>
+              </div>
+              <div style="display:flex;gap:26px;font-family:'IBM Plex Mono',monospace;">
+                <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">PAIRED</span><span style="{{ mgPairedStyle }}">{{ mgPaired }}</span></div>
+                <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">MOVES</span><span style="font-size:32px;line-height:1;">{{ mgMoves }}</span></div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <sc-for list="{{ mgLeft }}" as="c" hint-placeholder-count="4">
+                  <button onClick="{{ c.click }}" style="{{ c.style }}">{{ c.label }}</button>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <sc-for list="{{ mgRight }}" as="c" hint-placeholder-count="4">
+                  <button onClick="{{ c.click }}" style="{{ c.style }}">{{ c.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+              <button onClick="{{ mgReset }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:11px 20px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">Shuffle</button>
+              <span style="{{ mgMsgStyle }}">{{ mgMsg }}</span>
+            </div>
+          </section>
+
+          <sc-if value="{{ hasGraph }}" hint-placeholder-val="{{ false }}">
+            <section style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:20px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;flex-direction:column;gap:7px;">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.86 0.19 165);">See it</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:19px;font-weight:500;">{{ gTitle }}</div>
+                </div>
+                <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                  <sc-for list="{{ gLegend }}" as="lg" hint-placeholder-count="2">
+                    <div style="{{ lg.style }}"><span style="{{ lg.swatch }}"></span><span>{{ lg.label }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+              <svg viewBox="0 0 640 320" style="width:100%;height:auto;background:#0B0C0E;border:1px solid #1D2126;border-radius:6px;">
+                <line x1="0" y1="{{ gZeroY }}" x2="640" y2="{{ gZeroY }}" stroke="#232830" strokeWidth="1"></line>
+                <line x1="{{ gZeroX }}" y1="0" x2="{{ gZeroX }}" y2="320" stroke="#232830" strokeWidth="1"></line>
+                <sc-for list="{{ gCurves }}" as="c" hint-placeholder-count="2">
+                  <polyline points="{{ c.pts }}" fill="none" stroke="{{ c.color }}" strokeWidth="2.5" strokeLinejoin="round"></polyline>
+                </sc-for>
+                <sc-for list="{{ gDots }}" as="d" hint-placeholder-count="1">
+                  <circle cx="{{ d.x }}" cy="{{ d.y }}" r="{{ d.r }}" fill="{{ d.fill }}" stroke="{{ d.stroke }}" strokeWidth="2"></circle>
+                </sc-for>
+              </svg>
+              <div style="display:flex;gap:28px;flex-wrap:wrap;">
+                <sc-for list="{{ gSliders }}" as="s" hint-placeholder-count="2">
+                  <label style="display:flex;flex-direction:column;gap:8px;min-width:220px;flex:1;max-width:300px;">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9AA2AC;">{{ s.label }} = {{ s.value }}</span>
+                    <input type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.value }}" onChange="{{ s.onSlide }}" style="accent-color:oklch(0.86 0.19 165);width:100%;cursor:pointer;">
+                  </label>
+                </sc-for>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#6E7681;">{{ gNote }}</div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ demoBinary }}" hint-placeholder-val="{{ false }}">
+            <section style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:22px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+                <div style="display:flex;flex-direction:column;gap:7px;">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.86 0.19 165);">Run it</div>
+                  <div style="font-size:19px;font-weight:500;">binary_search(sorted[64], target=41)</div>
+                </div>
+                <div style="display:flex;gap:26px;font-family:'IBM Plex Mono',monospace;">
+                  <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">STEPS</span><span style="font-size:32px;line-height:1;color:oklch(0.86 0.19 165);">{{ bsSteps }}</span></div>
+                  <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">RANGE</span><span style="font-size:32px;line-height:1;">{{ bsLeft }}</span></div>
+                </div>
+              </div>
+              <div style="display:flex;gap:3px;align-items:flex-end;height:46px;">
+                <sc-for list="{{ bsCells }}" as="c" hint-placeholder-count="64"><div style="{{ c.style }}"></div></sc-for>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <button onClick="{{ bsStep }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:oklch(0.86 0.19 165);color:#04140B;border:none;border-radius:5px;padding:12px 24px;cursor:pointer;" style-hover="background:oklch(0.92 0.19 165);">halve()</button>
+                <button onClick="{{ bsReset }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:12px 20px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">reset()</button>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#6E7681;">{{ bsNote }}</span>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ demoRiemann }}" hint-placeholder-val="{{ false }}">
+            <section style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:22px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+                <div style="display:flex;flex-direction:column;gap:7px;">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.86 0.19 165);">Run it</div>
+                  <div style="font-size:19px;font-weight:500;">Rectangles under y = x² from 0 to 3</div>
+                </div>
+                <div style="display:flex;gap:26px;font-family:'IBM Plex Mono',monospace;">
+                  <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">ESTIMATE</span><span style="font-size:32px;line-height:1;color:oklch(0.86 0.19 165);">{{ riEstimate }}</span></div>
+                  <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">EXACT</span><span style="font-size:32px;line-height:1;">9</span></div>
+                </div>
+              </div>
+              <div style="display:flex;gap:2px;align-items:flex-end;height:150px;border-bottom:1px solid #2A3038;">
+                <sc-for list="{{ riBars }}" as="b" hint-placeholder-count="8"><div style="{{ b.style }}"></div></sc-for>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <sc-for list="{{ riChoices }}" as="c" hint-placeholder-count="5">
+                  <button onClick="{{ c.click }}" style="{{ c.style }}">{{ c.label }}</button>
+                </sc-for>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#6E7681;margin-left:6px;">{{ riNote }}</span>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ demoTruth }}" hint-placeholder-val="{{ false }}">
+            <section style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:20px;">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.86 0.19 165);">Run it</div>
+                <div style="font-size:19px;font-weight:500;">Flip the inputs and watch every connective respond</div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button onClick="{{ ttP }}" style="{{ ttPStyle }}">p = {{ ttPVal }}</button>
+                <button onClick="{{ ttQ }}" style="{{ ttQStyle }}">q = {{ ttQVal }}</button>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+                <sc-for list="{{ ttCells }}" as="c" hint-placeholder-count="5">
+                  <div style="{{ c.style }}">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#9AA2AC;margin-bottom:8px;">{{ c.label }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;">{{ c.val }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#6E7681;">{{ ttNote }}</div>
+            </section>
+          </sc-if>
+
+          <section style="background:#111418;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E8C555;">Write it out</div>
+              <div style="font-size:19px;font-weight:500;">{{ frPrompt }}</div>
+              <div style="font-size:14.5px;color:#8A929C;line-height:1.55;">Multiple choice tests whether you recognise an answer. This tests whether you can produce one — which is what a real exam asks. Marked out of 5 with specific feedback.</div>
+            </div>
+            <textarea value="{{ frVal }}" onChange="{{ frInput }}" placeholder="Write your answer in full sentences. Show your reasoning, not just the result." style="{{ frInputStyle }}"></textarea>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <button onClick="{{ frSubmit }}" style="{{ frBtnStyle }}">{{ frBtnLabel }}</button>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6E7681;">{{ frHint }}</span>
+            </div>
+            <sc-if value="{{ frHas }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ frOutStyle }}">
+                <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:12px;">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:30px;line-height:1;font-weight:600;">{{ frScore }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;">{{ frVerdict }}</span>
+                </div>
+                <p style="margin:0;font-size:16px;line-height:1.7;color:#C6CCD4;white-space:pre-wrap;">{{ frFeedback }}</p>
+              </div>
+            </sc-if>
+          </section>
+
+          <section style="background:#0E1116;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8FA0C9;">Explain it my way</div>
+                <div style="font-size:19px;font-weight:500;">Not landing? Have it re-taught in the way you learn.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <sc-for list="{{ aiStyles }}" as="st" hint-placeholder-count="6">
+                <button onClick="{{ st.click }}" style="{{ st.style }}">{{ st.label }}</button>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <input value="{{ aiQ }}" onChange="{{ aiInput }}" onKeyDown="{{ aiKey }}" placeholder="or ask anything about this lesson…" style="{{ aiInputStyle }}">
+              <button onClick="{{ aiAsk }}" style="{{ aiBtnStyle }}">{{ aiBtnLabel }}</button>
+            </div>
+
+            <sc-if value="{{ aiHas }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ aiOutStyle }}">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8FA0C9;margin-bottom:12px;">{{ aiMode }}</div>
+                <p style="margin:0;font-size:17px;line-height:1.75;color:#C6CCD4;white-space:pre-wrap;">{{ aiOut }}</p>
+              </div>
+            </sc-if>
+          </section>
+
+          <section style="{{ drillShellStyle }}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.86 0.19 165);">Drill it in</div>
+                <div style="font-size:19px;font-weight:500;">Five quick reps. Type the answer, press Enter.</div>
+                <sc-if value="{{ drFresh }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:oklch(0.86 0.19 165);">{{ drFreshLabel }}</div>
+                </sc-if>
+              </div>
+              <div style="display:flex;gap:26px;font-family:'IBM Plex Mono',monospace;">
+                <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">STREAK</span><span style="{{ streakStyle }}">{{ drStreak }}</span></div>
+                <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">SOLVED</span><span style="font-size:32px;line-height:1;">{{ drSolved }}</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:6px;">
+              <sc-for list="{{ drDots }}" as="d" hint-placeholder-count="5"><div style="{{ d.style }}"></div></sc-for>
+            </div>
+
+            <div style="{{ drCardStyle }}">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#5A626C;">Rep {{ drIndex }} of {{ drTotal }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:27px;line-height:1.35;color:#E7E9EC;">{{ drQ }}</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                <input value="{{ drVal }}" onChange="{{ drInput }}" onKeyDown="{{ drKey }}" placeholder="answer" style="{{ drInputStyle }}">
+                <button onClick="{{ drCheck }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:oklch(0.86 0.19 165);color:#04140B;border:none;border-radius:5px;padding:13px 26px;cursor:pointer;" style-hover="background:oklch(0.92 0.19 165);">Check</button>
+                <button onClick="{{ drSkip }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#6E7681;border:1px solid #2A3038;border-radius:5px;padding:13px 18px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">Skip</button>
+                <span style="{{ drMsgStyle }}">{{ drMsg }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section style="display:flex;flex-direction:column;gap:20px;">
+            <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">Check yourself</h2>
+            <sc-for list="{{ quiz }}" as="q" hint-placeholder-count="2">
+              <div style="display:flex;flex-direction:column;gap:16px;padding:24px;background:#101317;border:1px solid #1D2126;border-radius:8px;">
+                <div style="display:flex;gap:12px;align-items:baseline;">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5A626C;">{{ q.num }}</span>
+                  <p style="margin:0;font-size:21px;line-height:1.45;font-weight:500;">{{ q.q }}</p>
+                </div>
+
+                <sc-if value="{{ q.isMC }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+                    <sc-for list="{{ q.options }}" as="o" hint-placeholder-count="4">
+                      <button onClick="{{ o.click }}" style="{{ o.style }}">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ q.isIN }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                    <input value="{{ q.value }}" onChange="{{ q.onInput }}" onKeyDown="{{ q.onKey }}" placeholder="your answer" style="{{ q.inputStyle }}">
+                    <button onClick="{{ q.onCheck }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:oklch(0.86 0.19 165);color:#04140B;border:none;border-radius:5px;padding:12px 22px;cursor:pointer;" style-hover="background:oklch(0.92 0.19 165);">Check</button>
+                    <button onClick="{{ q.onSteps }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:12px 18px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">{{ q.stepsLabel }}</button>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ q.showSteps }}" hint-placeholder-val="{{ false }}">
+                  <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:9px;">
+                    <sc-for list="{{ q.steps }}" as="s" hint-placeholder-count="3">
+                      <li style="font-family:'IBM Plex Mono',monospace;font-size:15px;line-height:1.55;color:#C6CCD4;">{{ s.text }}</li>
+                    </sc-for>
+                  </ol>
+                </sc-if>
+
+                <sc-if value="{{ q.answered }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ q.feedbackStyle }}">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:9px;">{{ q.verdict }}</div>
+                    <p style="margin:0;font-size:16px;line-height:1.65;color:#C6CCD4;">{{ q.explain }}</p>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </section>
+
+          <section style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-top:1px solid #1D2126;padding-top:26px;">
+            <button onClick="{{ toggleDone }}" style="{{ doneBtnStyle }}">{{ doneBtnLabel }}</button>
+            <button onClick="{{ prev }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:12px 18px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">← {{ prevLabel }}</button>
+            <button onClick="{{ next }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:12px 18px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">{{ nextLabel }} →</button>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4A525C;margin-left:4px;">← / → to move between lessons</span>
+          </section>
+
+          <footer style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-top:8px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#4A525C;">Math for a CS Degree by <span style="color:#8A929C;">Mujtaba Hashimi</span> · Fannos Academy · US education system</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#333941;">© 2026 Mujtaba Hashimi · Proprietary — all rights reserved</span>
+          </footer>
+
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSheet }}" hint-placeholder-val="{{ false }}">
+      <div data-sheet="1" style="max-width:920px;margin:0 auto;padding:56px 56px 120px;display:flex;flex-direction:column;gap:40px;">
+        <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:1px solid #1D2126;padding-bottom:22px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <h1 style="margin:0;font-size:44px;line-height:1;font-weight:600;letter-spacing:-.03em;">Formula sheet</h1>
+            <p style="margin:0;font-size:16px;color:#9AA2AC;">Every formula in the course, in order. Print it.</p>
+          </div>
+          <div data-noprint="1" style="display:flex;gap:10px;">
+            <button onClick="{{ doPrint }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:oklch(0.86 0.19 165);color:#04140B;border:none;border-radius:5px;padding:12px 22px;cursor:pointer;">Print</button>
+            <button onClick="{{ showLesson }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:5px;padding:12px 18px;cursor:pointer;">Back</button>
+          </div>
+        </header>
+        <sc-for list="{{ sheet }}" as="s" hint-placeholder-count="10">
+          <section style="display:flex;flex-direction:column;gap:14px;break-inside:avoid;">
+            <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.86 0.19 165);">{{ s.n }}</h2>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+              <sc-for list="{{ s.rows }}" as="r" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:1fr;gap:5px;padding:13px 15px;background:#101317;border:1px solid #1D2126;border-radius:6px;">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6E7681;">{{ r.label }}</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:16px;">{{ r.expr }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+        </sc-for>
+      </div>
+    </sc-if>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:900},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;oklch(0.86 0.19 165)&quot;,&quot;options&quot;:[&quot;oklch(0.86 0.19 165)&quot;,&quot;oklch(0.82 0.16 85)&quot;,&quot;oklch(0.78 0.15 250)&quot;,&quot;oklch(0.78 0.17 330)&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;showFormulaSheet&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;quizPerLesson&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:1,&quot;max&quot;:2,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { data: null, tid: 'prealgebra', lid: 'signed', view: 'lesson', open: { prealgebra: true },
+    done: {}, ans: {}, entering: false, bs: { lo: 0, hi: 63, steps: 0 }, ri: 8, tt: { p: true, q: false },
+    depth: {}, facts: {}, g: {}, drSeed: 1, dr: { i: 0, val: '', status: null, streak: 0, solved: 0, hist: [] },
+    mg: { order: null, sel: null, done: [], moves: 0, wrong: null },
+    ex: null, passed: {}, attempts: {}, weak: {}, shield: null, focusLost: 0, light: false,
+    ai: { q: '', out: '', mode: '', busy: false },
+    fr: { val: '', score: null, feedback: '', busy: false }, queue: {} };
+
+  addToQueue(lid, kind, text) {
+    this.setState(s => {
+      const q = Object.assign({}, s.queue);
+      const key = lid + '|' + kind;
+      q[key] = { lid, kind, text, due: Date.now() + 864e5, misses: ((q[key] || {}).misses || 0) + 1 };
+      this.save({ queue: q });
+      return { queue: q };
+    });
+  }
+  clearFromQueue(lid, kind) {
+    this.setState(s => {
+      const q = Object.assign({}, s.queue);
+      delete q[lid + '|' + kind];
+      this.save({ queue: q });
+      return { queue: q };
+    });
+  }
+
+  async gradeFR() {
+    const cur = this.flat().find(x => x.l.id === this.state.lid);
+    if (!cur || this.state.fr.busy) return;
+    const ans = this.state.fr.val.trim();
+    if (ans.length < 12) return;
+    const l = cur.l;
+    this.setState(s => ({ fr: Object.assign({}, s.fr, { busy: true, score: null, feedback: '' }) }));
+    const prompt = `You are marking a written answer in a computer science mathematics course. Be a fair but exacting examiner.
+
+Lesson: ${l.title}
+Core idea: ${l.idea}
+Key formulas: ${l.f.map(f => f[0] + ': ' + f[1]).join('; ')}
+
+Question asked: "${l.idea.replace(/\.$/, '')} — explain this in your own words and justify why it is true."
+
+The learner wrote:
+"""${ans}"""
+
+Mark it out of 5. Award marks for correctness of the mathematics, for justification rather than restatement, and for using the right vocabulary. Do not award marks for length or confidence.
+
+Reply in exactly this format and nothing else:
+SCORE: <0-5>
+FEEDBACK: <under 90 words. Name specifically what was right, then the single most important thing missing or wrong, then one concrete sentence they should have written.>`;
+    try {
+      const text = await window.claude.complete({ messages: [{ role: 'user', content: prompt }] });
+      const m = String(text || '').match(/SCORE:\s*(\d)/);
+      const fb = String(text || '').split(/FEEDBACK:\s*/)[1] || String(text || '');
+      const sc = m ? parseInt(m[1], 10) : null;
+      this.setState(s => ({ fr: Object.assign({}, s.fr, { busy: false, score: sc, feedback: fb.trim() }) }));
+      if (sc != null && sc < 4) this.addToQueue(l.id, 'write', l.title);
+      else this.clearFromQueue(l.id, 'write');
+    } catch (e) {
+      this.setState(s => ({ fr: Object.assign({}, s.fr, { busy: false, score: null, feedback: 'Could not reach the marker just now. Try again in a moment.' }) }));
+    }
+  }
+
+  STYLES = [
+    ['Like I\u2019m 12', 'Explain it to a bright twelve-year-old. Everyday words, one concrete story, no jargon that is not immediately unpacked. Do not talk down.'],
+    ['Show me the steps', 'Work one representative problem end to end, numbered, showing every algebraic step and stating the rule used at each line.'],
+    ['Just the code', 'Explain it through code. Give a short, commented, language-agnostic implementation and connect each line back to the mathematics.'],
+    ['Visually', 'Explain it through what it looks like: shape, direction, size, movement. Describe the picture precisely in words so the reader can draw it.'],
+    ['Why do I care', 'Explain where this actually shows up in real engineering work, with two specific concrete situations where not knowing it causes a real bug or a bad decision.'],
+    ['Where I go wrong', 'Name the three most common mistakes people make with this topic, why each is tempting, and the exact check that catches each one.']
+  ];
+
+  async runAI(label, instruction, extra) {
+    const cur = this.flat().find(x => x.l.id === this.state.lid);
+    if (!cur || this.state.ai.busy) return;
+    const l = cur.l, dep = (this.state.depth || {})[l.id] || {};
+    this.setState(s => ({ ai: Object.assign({}, s.ai, { busy: true, mode: label, out: '' }) }));
+    const sys = 'You are a mathematics tutor for a computer science degree. You are rigorous and never dumb the mathematics down, but you are plain-spoken. No preamble, no sign-off, no bullet-point padding, no emoji. Prose and worked lines only. Under 220 words.';
+    const ctx = `Lesson: ${l.title}\nCore idea: ${l.idea}\nWhy CS needs it: ${l.cs}\nKey formulas: ${l.f.map(f => f[0] + ': ' + f[1]).join('; ')}\nExisting analogy (do not repeat it): ${dep.an || 'none'}`;
+    const task = extra ? `The learner asks: "${extra}"\nAnswer it in the context of this lesson.` : instruction;
+    try {
+      const text = await window.claude.complete({ system: sys, messages: [{ role: 'user', content: ctx + '\n\n' + task }] });
+      this.setState(s => ({ ai: Object.assign({}, s.ai, { busy: false, out: String(text || '').trim() }) }));
+    } catch (e) {
+      this.setState(s => ({ ai: Object.assign({}, s.ai, { busy: false, out: 'Could not reach the tutor just now. Try again in a moment.' }) }));
+    }
+  }
+
+  applyTheme(on) {
+    try { document.documentElement.classList.toggle('mfcs-light', !!on); localStorage.setItem('mfcs-light', on ? '1' : '0'); } catch (e) {}
+  }
+
+  examBlocked(t) {
+    const S = this.state;
+    if (S.passed[t.id] || (S.attempts[t.id] || 0) < 3) return false;
+    return (S.weak[t.id] || []).some(w => w && w.id && !S.done[w.id]);
+  }
+  unlockedSet(tracks) {
+    const out = {};
+    let gate = true;
+    tracks.forEach(t => { out[t.id] = gate; if (!this.state.passed[t.id]) gate = false; });
+    return out;
+  }
+
+  buildFinal(tracks) {
+    const pool = [];
+    tracks.forEach(t => {
+      const tp = [];
+      t.lessons.forEach(l => (l.q || []).forEach(item => { if (item.t === 'mc') tp.push({ q: item.q, o: item.o, a: item.a, e: item.e, from: t.n + ' · ' + l.title, lid: l.id }); }));
+      const ord = this.shuffle(tp.length, Date.now() % 7919 + t.id.length);
+      pool.push(tp[ord[0]], tp[ord[1] != null ? ord[1] : ord[0]]);
+    });
+    const ord = this.shuffle(pool.length, Date.now() % 99991 + 1);
+    return { tid: '__final', title: 'Final examination', items: ord.map(i => pool[i]), picked: {}, scored: false };
+  }
+  buildExam(track) {
+    const pool = [];
+    track.lessons.forEach(l => (l.q || []).forEach(item => {
+      if (item.t !== 'mc') return;
+      pool.push({ q: item.q, o: item.o, a: item.a, e: item.e, from: l.title, lid: l.id });
+    }));
+    const ord = this.shuffle(pool.length, Date.now() % 99991 + 1);
+    return { tid: track.id, title: track.n, items: ord.map(i => pool[i]), picked: {}, scored: false };
+  }
+
+  shuffle(n, seed) {
+    const a = Array.from({ length: n }, (_, i) => i);
+    let s = seed;
+    for (let i = n - 1; i > 0; i--) { s = (s * 1103515245 + 12345) % 2147483648; const j = s % (i + 1); const t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  gdefs() {
+    if (this._gd) return this._gd;
+    const G = 'oklch(0.86 0.19 165)', BL = '#5CA8FF', YL = '#E8C555', OR = '#FF9D5C', RD = 'oklch(0.7 0.17 25)', GH = '#39424C';
+    const fmt = n => n >= 1e6 ? n.toExponential(1) : Math.round(n).toLocaleString('en-US');
+    this._gd = {
+      line: { x: [-10, 10], y: [-10, 10],
+        sliders: [{ k: 'm', label: 'slope m', min: -5, max: 5, step: 0.5, def: 1.5 }, { k: 'b', label: 'intercept b', min: -8, max: 8, step: 1, def: 2 }],
+        title: v => `y = ${v.m}x + ${v.b}`,
+        curves: v => [{ color: G, label: 'the line', fn: x => v.m * x + v.b }],
+        dots: v => [{ x: 0, y: v.b, fill: G, stroke: G }],
+        note: v => v.m === 0 ? 'slope 0 \u2014 flat: y never changes' : `slope ${v.m}: every step right moves y by ${v.m} \u2014 crosses the axis at (0, ${v.b})` },
+      parabola: { x: [-8, 8], y: [-12, 20],
+        sliders: [{ k: 'a', label: 'a', min: -2, max: 2, step: 0.5, def: 1 }, { k: 'b', label: 'b', min: -6, max: 6, step: 1, def: -2 }, { k: 'c', label: 'c', min: -8, max: 8, step: 1, def: -3 }],
+        title: v => `y = ${v.a}x\u00b2 + ${v.b}x + ${v.c}`,
+        curves: v => [{ color: G, label: 'the parabola', fn: x => v.a * x * x + v.b * x + v.c }],
+        dots: v => { if (!v.a) return []; const vx = -v.b / (2 * v.a); return [{ x: vx, y: v.a * vx * vx + v.b * vx + v.c, fill: YL, stroke: YL, r: 5 }]; },
+        note: v => { if (!v.a) return 'a = 0: not a parabola any more \u2014 just a line'; const d = v.b * v.b - 4 * v.a * v.c; return `\u0394 = b\u00b2 \u2212 4ac = ${d}: ${d > 0 ? 'two real roots \u2014 it crosses the axis twice' : d === 0 ? 'one root \u2014 it kisses the axis at the vertex' : 'no real roots \u2014 it never touches the axis'}`; } },
+      shift: { x: [-8, 8], y: [-8, 14],
+        sliders: [{ k: 'h', label: 'shift right h', min: -4, max: 4, step: 1, def: 2 }, { k: 'k', label: 'shift up k', min: -6, max: 6, step: 1, def: 3 }],
+        title: v => `y = (x \u2212 ${v.h})\u00b2 + ${v.k}`,
+        curves: v => [{ color: GH, label: 'y = x\u00b2 original', fn: x => x * x }, { color: G, label: 'shifted', fn: x => (x - v.h) * (x - v.h) + v.k }],
+        dots: v => [{ x: v.h, y: v.k, fill: G, stroke: G, r: 5 }],
+        note: v => `vertex moved to (${v.h}, ${v.k}) \u2014 the minus inside the bracket moves it right, the plus outside moves it up` },
+      exp: { x: [-2, 6], y: [-2, 42],
+        sliders: [{ k: 'b', label: 'base b', min: 0.5, max: 3, step: 0.25, def: 2 }],
+        title: v => `y = ${v.b}\u02e3`,
+        curves: v => [{ color: GH, label: 'y = x for scale', fn: x => x }, { color: G, label: 'exponential', fn: x => Math.pow(v.b, x) }],
+        note: v => v.b > 1 ? `every step right multiplies y by ${v.b} \u2014 no straight line can keep up for long` : v.b === 1 ? 'b = 1: constant \u2014 growth needs b > 1' : `b = ${v.b} < 1: decay \u2014 each step multiplies by less than one` },
+      sine: { x: [-6.5, 6.5], y: [-4.5, 4.5],
+        sliders: [{ k: 'A', label: 'amplitude A', min: 0.5, max: 4, step: 0.5, def: 2 }, { k: 'B', label: 'frequency B', min: 0.5, max: 4, step: 0.5, def: 1 }],
+        title: v => `y = ${v.A} sin(${v.B}x)`,
+        curves: v => [{ color: G, label: 'the wave', fn: x => v.A * Math.sin(v.B * x) }],
+        note: v => `amplitude ${v.A}, period 2\u03c0/${v.B} \u2248 ${(2 * Math.PI / v.B).toFixed(2)} \u2014 B squeezes cycles in, A turns the volume up` },
+      seq: { x: [-0.5, 12], y: [0, 26],
+        sliders: [{ k: 'r', label: 'geometric ratio r', min: 0.5, max: 1.8, step: 0.1, def: 1.3 }],
+        title: v => `a\u2099 = 1 + 2n  vs  g\u2099 = ${v.r}\u207f`,
+        curves: v => [{ color: BL, label: 'arithmetic +2' }, { color: G, label: 'geometric \u00d7' + v.r }],
+        dots: v => { const out = []; for (let n = 0; n <= 11; n++) { out.push({ x: n, y: 1 + 2 * n, fill: BL, stroke: BL }); out.push({ x: n, y: Math.pow(v.r, n), fill: G, stroke: G }); } return out; },
+        note: v => v.r > 1 ? `r = ${v.r} > 1: the geometric terms eventually overtake any arithmetic sequence \u2014 slide r up and watch` : v.r === 1 ? 'r = 1: the geometric sequence is constant' : `r = ${v.r} < 1: terms shrink toward 0 \u2014 the infinite series converges to ${(1 / (1 - v.r)).toFixed(2)}` },
+      limit: { x: [-1, 7], y: [0, 10],
+        sliders: [{ k: 'x0', label: 'x approaching 3', min: 0, max: 5.9, step: 0.1, def: 5 }],
+        title: () => 'f(x) = (x\u00b2 \u2212 9)/(x \u2212 3) near the hole at x = 3',
+        curves: () => [{ color: G, label: 'f(x)', fn: x => Math.abs(x - 3) < 0.02 ? NaN : (x * x - 9) / (x - 3) }],
+        dots: v => [{ x: 3, y: 6, fill: '#0B0C0E', stroke: G, r: 5 }, { x: v.x0, y: v.x0 + 3, fill: YL, stroke: YL, r: 5 }],
+        note: v => `f(${v.x0.toFixed(1)}) = ${(v.x0 + 3).toFixed(1)} \u2014 slide toward 3: the value approaches 6 even though f(3) itself is undefined` },
+      tangent: { x: [-4, 4], y: [-2, 16],
+        sliders: [{ k: 'x0', label: 'point x\u2080', min: -3, max: 3, step: 0.5, def: 1 }],
+        title: v => 'y = x\u00b2 and its tangent at x\u2080 = ' + v.x0,
+        curves: v => [{ color: G, label: 'y = x\u00b2', fn: x => x * x }, { color: BL, label: 'tangent, slope ' + 2 * v.x0, fn: x => v.x0 * v.x0 + 2 * v.x0 * (x - v.x0) }],
+        dots: v => [{ x: v.x0, y: v.x0 * v.x0, fill: YL, stroke: YL, r: 5 }],
+        note: v => `slope = 2x\u2080 = ${2 * v.x0}: ${2 * v.x0 > 0 ? 'the curve is rising here' : 2 * v.x0 < 0 ? 'the curve is falling here' : 'flat \u2014 a critical point, the minimum'}` },
+      relu: { x: [-6, 6], y: [-3, 7],
+        sliders: [{ k: 'leak', label: 'negative slope (leaky ReLU)', min: 0, max: 1, step: 0.1, def: 0 }],
+        title: v => v.leak === 0 ? 'ReLU: max(0, x)' : `Leaky ReLU: slope ${v.leak} below zero`,
+        curves: v => [{ color: GH, label: 'y = x (linear)', fn: x => x }, { color: G, label: 'activation', fn: x => x >= 0 ? x : v.leak * x }],
+        dots: () => [{ x: 0, y: 0, fill: YL, stroke: YL, r: 5 }],
+        note: v => v.leak === 0 ? 'the kink at 0 is the whole point — stacking linear pieces only ever gives a line' : `slope ${v.leak} below zero keeps a gradient alive where plain ReLU would give exactly 0` },
+      descent: { x: [-6, 6], y: [-2, 34],
+        sliders: [{ k: 'lr', label: 'learning rate η', min: 0.05, max: 1.05, step: 0.05, def: 0.3 }, { k: 'steps', label: 'steps taken', min: 0, max: 12, step: 1, def: 6 }],
+        title: v => `θ ← θ − ${v.lr.toFixed(2)}·∇L  on  L(θ) = θ²`,
+        curves: () => [{ color: GH, label: 'loss surface θ²', fn: x => x * x }, { color: G, label: 'descent path' }],
+        dots: v => { const out = []; let t = -5; for (let i = 0; i <= v.steps; i++) { out.push({ x: t, y: t * t, fill: i === v.steps ? YL : G, stroke: i === v.steps ? YL : G, r: i === v.steps ? 5.5 : 3.5 }); t = t - v.lr * 2 * t; } return out; },
+        note: v => { let t = -5; for (let i = 0; i < v.steps; i++) t = t - v.lr * 2 * t; const a = Math.abs(t);
+          return v.lr >= 1 ? `η = ${v.lr.toFixed(2)} ≥ 1: each step overshoots — |θ| = ${a.toFixed(2)} and growing. Diverged.`
+            : a < 0.05 ? `converged: θ ≈ ${t.toFixed(3)} after ${v.steps} steps` : `θ = ${t.toFixed(3)} after ${v.steps} steps — still descending`; } },
+      entropy: { x: [0, 1], y: [0, 1.15],
+        sliders: [{ k: 'p', label: 'probability p of heads', min: 0.01, max: 0.99, step: 0.01, def: 0.5 }],
+        title: v => `H(p) = −p log₂p − (1−p) log₂(1−p)`,
+        curves: () => [{ color: G, label: 'entropy in bits', fn: p => p <= 0 || p >= 1 ? 0 : -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p)) }],
+        dots: v => { const h = -(v.p * Math.log2(v.p) + (1 - v.p) * Math.log2(1 - v.p)); return [{ x: v.p, y: h, fill: YL, stroke: YL, r: 5 }]; },
+        note: v => { const h = -(v.p * Math.log2(v.p) + (1 - v.p) * Math.log2(1 - v.p));
+          return `p = ${v.p.toFixed(2)} ⇒ ${h.toFixed(3)} bits. ${v.p > 0.47 && v.p < 0.53 ? 'A fair coin is maximally surprising: exactly 1 bit.' : 'A biased coin is more predictable, so it costs less than a bit to record.'}`; } },
+      binomdist: { x: v => [0, v.n], y: [0, 0.42],
+        sliders: [{ k: 'n', label: 'trials n', min: 4, max: 24, step: 2, def: 10 }, { k: 'p', label: 'success rate p', min: 0.05, max: 0.95, step: 0.05, def: 0.5 }],
+        title: v => `Binomial(n = ${v.n}, p = ${v.p.toFixed(2)})`,
+        curves: () => [{ color: G, label: 'P(k successes)' }],
+        dots: v => { const out = []; const C = (n, k) => { let r = 1; for (let i = 0; i < k; i++) r = r * (n - i) / (i + 1); return r; };
+          for (let k = 0; k <= v.n; k++) out.push({ x: k, y: C(v.n, k) * Math.pow(v.p, k) * Math.pow(1 - v.p, v.n - k), fill: G, stroke: G, r: 4 }); return out; },
+        note: v => `mean np = ${(v.n * v.p).toFixed(1)}, variance np(1−p) = ${(v.n * v.p * (1 - v.p)).toFixed(2)} — the peak sits at the mean and the spread is widest at p = 0.5` },
+      amort: { x: v => [1, v.n], y: v => [0, v.n * 2.2],
+        sliders: [{ k: 'n', label: 'appends', min: 8, max: 128, step: 8, def: 64 }],
+        title: v => `Total element copies after n appends (doubling array)`,
+        curves: v => [{ color: GH, label: '2n bound', fn: x => 2 * x }, { color: G, label: 'actual copies', fn: x => { let c = 0, cap = 1; for (let i = 1; i <= x; i++) if (i > cap) { c += cap; cap *= 2; } return c; } }],
+        note: v => { let c = 0, cap = 1; for (let i = 1; i <= v.n; i++) if (i > cap) { c += cap; cap *= 2; }
+          return `${v.n} appends cost ${c} copies total — ${(c / v.n).toFixed(2)} per append, permanently under 2. That is amortised O(1).`; } },
+      vector: { x: [-1, 10], y: [-1, 10],
+        sliders: [{ k: 'x', label: 'v.x', min: 0, max: 9, step: 1, def: 6 }, { k: 'y', label: 'v.y', min: 0, max: 9, step: 1, def: 8 }],
+        title: v => `v = [${v.x}, ${v.y}]   ‖v‖ = √(${v.x}² + ${v.y}²)`,
+        curves: v => [{ color: G, label: 'the vector', fn: null }, { color: GH, label: 'components' }],
+        dots: v => { const out = []; const n = 26; for (let i = 0; i <= n; i++) out.push({ x: v.x * i / n, y: v.y * i / n, fill: G, stroke: G, r: 2.5 });
+          for (let i = 0; i <= n; i++) out.push({ x: v.x * i / n, y: 0, fill: GH, stroke: GH, r: 1.5 });
+          for (let i = 0; i <= n; i++) out.push({ x: v.x, y: v.y * i / n, fill: GH, stroke: GH, r: 1.5 });
+          out.push({ x: v.x, y: v.y, fill: YL, stroke: YL, r: 6 }); return out; },
+        note: v => `‖v‖ = √${v.x * v.x + v.y * v.y} = ${Math.sqrt(v.x * v.x + v.y * v.y).toFixed(3)} — Pythagoras, and the identical formula runs over 768 components in an embedding` },
+      growth: { x: v => [1, v.N], y: v => [0, v.N * v.N],
+        sliders: [{ k: 'N', label: 'input size n', min: 8, max: 64, step: 8, def: 16 }],
+        title: v => 'Five algorithms race to n = ' + v.N,
+        curves: () => [
+          { color: G, label: 'log\u2082 n', fn: x => Math.log2(x) },
+          { color: BL, label: 'n', fn: x => x },
+          { color: YL, label: 'n log\u2082 n', fn: x => x * Math.log2(Math.max(x, 1)) },
+          { color: OR, label: 'n\u00b2', fn: x => x * x },
+          { color: RD, label: '2\u207f', fn: x => Math.pow(2, x) }],
+        note: v => `at n = ${v.N}:  log n \u2248 ${Math.round(Math.log2(v.N))} \u00b7 n = ${v.N} \u00b7 n log n \u2248 ${Math.round(v.N * Math.log2(v.N))} \u00b7 n\u00b2 = ${v.N * v.N} \u00b7 2\u207f \u2248 ${fmt(Math.pow(2, v.N))}` },
+    };
+    return this._gd;
+  }
+
+  componentDidMount() {
+    Promise.all([import('./course-data.js'), import('./course-depth.js'), import('./course-facts.js'), import('./course-gen.js')]).then(([m, d, f, g]) => {
+      this._facts = f.FACTS;
+      this._threads = m.THREADS || [];
+      this._make = g.makeDrills;
+      this._genIds = Object.keys(g.GEN || {});
+      this.forceUpdate();
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem('mfcs-v1') || '{}'); } catch (e) {}
+      const tid = saved.tid || 'prealgebra', lid = saved.lid || 'signed';
+      if (!saved.seen) { this._firstRun = true; }
+      this.setState({ data: m.TRACKS, total: m.TOTAL_LESSONS, depth: d.DEPTH, facts: f.FACTS, tid, lid,
+        done: saved.done || {}, passed: saved.passed || {}, attempts: saved.attempts || {}, weak: saved.weak || {}, queue: saved.queue || {},
+        view: saved.seen ? 'lesson' : 'home',
+        open: Object.assign({}, this.state.open, { [tid]: true }) });
+    });
+    this._key = e => {
+      if (e.target && /input|textarea/i.test(e.target.tagName)) return;
+      if (e.key === 'ArrowRight') this.go(1);
+      if (e.key === 'ArrowLeft') this.go(-1);
+    };
+    let lt = false;
+    try { lt = localStorage.getItem('mfcs-light') === '1'; } catch (e) {}
+    if (lt) { this.applyTheme(true); this.setState({ light: true }); }
+    window.addEventListener('keydown', this._key);
+    this._shieldKey = e => {
+      if (e.key === 'PrintScreen' || (e.metaKey && e.shiftKey && ['3', '4', '5', 's', 'S'].indexOf(e.key) >= 0)) {
+        this.setState({ shield: { title: 'Screenshot detected', msg: 'Math for a CS Degree is a proprietary course, © Mujtaba Hashimi, licensed to you personally. Screenshots of lessons and exams are watermarked to your session — sharing them is a violation of the licence.' } });
+      }
+    };
+    this._blur = () => {
+      if (this.state.view !== 'exam' || !this.state.ex || this.state.ex.scored) return;
+      this.setState(s => ({ focusLost: s.focusLost + 1,
+        shield: { title: 'Exam integrity', msg: `You left the exam tab. Looking answers up — in a chatbot or anywhere else — only defeats you: the next track assumes you can do this without help. Tab switches are counted (${s.focusLost + 1} so far) and shown on your result.` } }));
+    };
+    this._copy = e => {
+      if (this.state.view === 'exam' && this.state.ex && !this.state.ex.scored) { e.preventDefault();
+        this.setState({ shield: { title: 'Copy blocked during exams', msg: 'Exam questions cannot be copied out while the attempt is live. Pasting them into an AI tells you the answer today and fails you the exam that matters later.' } });
+      }
+    };
+    window.addEventListener('keyup', this._shieldKey);
+    window.addEventListener('blur', this._blur);
+    document.addEventListener('copy', this._copy);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this._key);
+    window.removeEventListener('keyup', this._shieldKey);
+    window.removeEventListener('blur', this._blur);
+    document.removeEventListener('copy', this._copy);
+  }
+
+  save(next) {
+    const s = Object.assign({}, this.state, next);
+    try { localStorage.setItem('mfcs-v1', JSON.stringify({ tid: s.tid, lid: s.lid, done: s.done, seen: true,
+      passed: s.passed, attempts: s.attempts, weak: s.weak, queue: s.queue })); } catch (e) {}
+  }
+  flat() {
+    const out = [];
+    (this.state.data || []).forEach(t => t.lessons.forEach(l => out.push({ t, l })));
+    return out;
+  }
+  select(tid, lid) {
+    const un = this.unlockedSet(this.state.data || []);
+    if (un[tid] === false) {
+      const tracks = this.state.data || [];
+      const i = tracks.findIndex(t => t.id === tid);
+      const prev = tracks[i - 1];
+      this.setState({ shield: { title: 'Track locked', msg: `Pass the ${prev ? prev.n : 'previous track'} exam to unlock ${tracks[i] ? tracks[i].n : 'this track'}. The gate is the point: every track assumes the one before it.` } });
+      return;
+    }
+    clearTimeout(this._drT);
+    this.setState({ tid, lid, view: 'lesson', entering: true, bs: { lo: 0, hi: 63, steps: 0 }, ri: 8, g: {},
+      drSeed: (Date.now() % 2147483647) || 7,
+      dr: { i: 0, val: '', status: null, streak: 0, solved: 0, hist: [] },
+      mg: { order: null, sel: null, done: [], moves: 0, wrong: null },
+      ai: { q: '', out: '', mode: '', busy: false },
+      fr: { val: '', score: null, feedback: '', busy: false } });
+    this.save({ tid, lid });
+    clearTimeout(this._enterT);
+    this._enterT = setTimeout(() => this.setState({ entering: false }), 20);
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  go(d) {
+    const f = this.flat();
+    const i = f.findIndex(x => x.l.id === this.state.lid);
+    const n = f[i + d];
+    if (!n) return;
+    this.setState(s => ({ open: Object.assign({}, s.open, { [n.t.id]: true }) }));
+    this.select(n.t.id, n.l.id);
+  }
+  setAns(qi, patch) {
+    this.setState(s => {
+      const per = Object.assign({}, s.ans[s.lid] || {});
+      per[qi] = Object.assign({}, per[qi] || {}, patch);
+      return { ans: Object.assign({}, s.ans, { [s.lid]: per }) };
+    });
+  }
+  norm(v) { return String(v == null ? '' : v).toLowerCase().replace(/[\s,]/g, '').replace(/\u2212/g, '-'); }
+
+  renderVals() {
+    const S = this.state, G = 'oklch(0.86 0.19 165)', R = 'oklch(0.7 0.17 25)';
+    const tracks = S.data || [];
+    const flat = this.flat();
+    const total = S.total || flat.length || 40;
+    const doneCount = Object.keys(S.done).filter(k => S.done[k]).length;
+    const C = 2 * Math.PI * 19;
+    const frac = total ? doneCount / total : 0;
+
+    const unlocked = this.unlockedSet(tracks);
+    const trackViews = tracks.map(t => {
+      const dn = t.lessons.filter(l => S.done[l.id]).length;
+      const isCur = t.id === S.tid;
+      const un = unlocked[t.id];
+      return { key: t.id, n: t.n, frac: S.passed[t.id] ? '✓' : un ? dn + '/' + t.lessons.length : '🔒', open: !!S.open[t.id] && un,
+        toggle: () => { if (!un) return; this.setState(s => ({ open: Object.assign({}, s.open, { [t.id]: !s.open[t.id] }) })); },
+        startExam: () => { if (this.examBlocked(t)) return; this.setState({ view: 'exam', ex: this.buildExam(t), focusLost: 0 }); },
+        headStyle: `display:flex;align-items:center;gap:9px;width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:${isCur ? 600 : 500};color:${!un ? '#4A525C' : isCur ? '#E7E9EC' : '#9AA2AC'};background:transparent;border:none;border-radius:6px;padding:10px 10px;cursor:${un ? 'pointer' : 'not-allowed'};text-align:left;`,
+        caretStyle: `display:inline-block;font-size:10px;color:#5A626C;transform:rotate(${S.open[t.id] ? 90 : 0}deg);transition:transform .2s ease;`,
+        items: t.lessons.map(l => {
+          const cur = l.id === S.lid;
+          const dd = !!S.done[l.id];
+          return { key: l.id, title: l.title, click: () => this.select(t.id, l.id),
+            style: `display:flex;align-items:center;gap:10px;width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:${cur ? '#04140B' : dd ? '#9AA2AC' : '#7C838C'};background:${cur ? G : 'transparent'};border:none;border-radius:6px;padding:9px 10px 9px 28px;cursor:pointer;transition:background .15s ease,color .15s ease;font-weight:${cur ? 600 : 400};`,
+            dotStyle: `width:5px;height:5px;border-radius:50%;flex:none;background:${cur ? '#04140B' : dd ? G : '#333941'};` };
+        }) };
+    });
+
+    const cur = flat.find(x => x.l.id === S.lid) || flat[0];
+    let nF = 0, nD = 0, nQ = 0;
+    tracks.forEach(t => t.lessons.forEach(x => { nF += x.f.length; nQ += (x.q || []).length; nD += (((S.depth || {})[x.id] || {}).d || []).length; }));
+
+    const E = S.ex;
+    const exam = E ? (() => {
+      const picked = E.picked, n = E.items.length;
+      const nAns = Object.keys(picked).length;
+      const right = E.items.reduce((a, it, i) => a + (picked[i] === it.a ? 1 : 0), 0);
+      const pct = n ? Math.round(right / n * 100) : 0;
+      const isFinal = E.tid === '__final';
+      const pass = pct >= (isFinal ? 80 : 70);
+      return { exTitle: E.title, exCount: n, exScored: E.scored, exPct: pct,
+        exIntegrity: S.focusLost === 0 ? '● proctored session' : `● ${S.focusLost} tab ${S.focusLost === 1 ? 'switch' : 'switches'} recorded`,
+        exIntegrityStyle: `font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${S.focusLost === 0 ? 'oklch(0.86 0.19 165)' : 'oklch(0.7 0.17 25)'};`,
+        exVerdict: pass ? (isFinal ? 'Graduated' : 'Pass') : 'Not yet',
+        exShowCert: isFinal && E.scored && pass,
+        exCert: () => this.setState({ view: 'cert' }),
+        exSummary: isFinal && pass ? `${right} of ${n} correct across every track in the course. Your certificate is ready.`
+          : pass ? `${right} of ${n} correct. Review anything you missed below, then move on to the next track.`
+          : `${right} of ${n} correct \u2014 70% is the pass mark. The explanations below name the lesson each question came from; work through those and retake it.`,
+        exResultStyle: `background:#111418;border:1px solid #1D2126;border-left:3px solid ${pass ? G : R};border-radius:8px;padding:26px 28px;color:${pass ? G : R};animation:rise .4s ease both;`,
+        exProgress: E.scored ? `Scored \u00b7 ${right}/${n}` : `${nAns} of ${n} answered`,
+        exSubmitLabel: E.scored ? (this.examBlocked(tracks.find(x => x.id === E.tid) || { id: E.tid }) ? 'Locked — redo the flagged lessons first' : 'Retake with fresh order') : 'Submit for a score',
+        exSubmitStyle: `font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:${!E.scored && nAns < n ? '#1D2126' : 'oklch(0.86 0.19 165)'};color:${!E.scored && nAns < n ? '#5A626C' : '#04140B'};border:none;border-radius:5px;padding:13px 28px;cursor:${!E.scored && nAns < n ? 'not-allowed' : 'pointer'};transition:all .2s ease;`,
+        exSubmit: () => {
+          if (E.scored) {
+            if (E.tid === '__final') return this.setState({ ex: this.buildFinal(tracks) });
+            const t = tracks.find(x => x.id === E.tid); if (this.examBlocked(t)) return; return this.setState({ ex: this.buildExam(t) }); }
+          if (nAns < n) return;
+          const missed = [];
+          E.items.forEach((it, i) => { if (picked[i] !== it.a && !missed.some(m => m.id === it.lid)) missed.push({ id: it.lid, title: it.from }); });
+          this.setState(s => {
+            const nAt = (s.attempts[E.tid] || 0) + 1;
+            const at = Object.assign({}, s.attempts, { [E.tid]: nAt });
+            const pa = pass ? Object.assign({}, s.passed, { [E.tid]: true }) : s.passed;
+            const wk = Object.assign({}, s.weak, { [E.tid]: missed });
+            let dn = s.done;
+            if (!pass && nAt >= 3 && E.tid !== '__final') { dn = Object.assign({}, s.done); missed.forEach(m => { delete dn[m.id]; }); }
+            this.save({ attempts: at, passed: pa, weak: wk, done: dn });
+            return { ex: Object.assign({}, s.ex, { scored: true }), attempts: at, passed: pa, weak: wk, done: dn };
+          });
+          if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        exAttempt: (S.attempts[E.tid] || 0) + (E.scored ? 0 : 1),
+        exRemedial: E.scored && !pass,
+        exRemedialHard: E.scored && !pass && (S.attempts[E.tid] || 0) >= 2,
+        exRemedialList: (S.weak[E.tid] || []).map((w, i) => ({ key: i, title: w && w.title ? w.title : String(w) })),
+        exRemedialNote: (S.attempts[E.tid] || 0) >= 3
+          ? `Attempt ${S.attempts[E.tid]}. The exam is now locked: the lessons below have been un-marked and you must complete each one again — read it, clear the drills, mark it complete — before you can retake.`
+          : (S.attempts[E.tid] || 0) >= 2
+          ? `That is attempt ${S.attempts[E.tid]} on this track. One more failure locks the exam and un-marks the lessons below — you would have to redo them in full before retaking.`
+          : 'These are the lessons your missed questions came from. Work through each one — the drills especially — then retake the exam.',
+        exBack: () => this.setState({ view: 'lesson', ex: null }),
+        exQuestions: E.items.map((it, i) => {
+          const p = picked[i], ok = p === it.a;
+          return { key: i, num: String(i + 1).padStart(2, '0'), q: it.q, from: it.from,
+            wrapStyle: `display:flex;flex-direction:column;gap:14px;padding:22px;background:#101317;border:1px solid ${E.scored ? (ok ? 'oklch(0.86 0.19 165 / 0.4)' : 'oklch(0.7 0.17 25 / 0.4)') : '#1D2126'};border-radius:8px;transition:border-color .3s ease;`,
+            reveal: E.scored, explain: it.e,
+            options: it.o.map((label, j) => {
+              let bg = '#15191E', bd = '#1D2126', col = '#E7E9EC';
+              if (E.scored) {
+                if (j === it.a) { bg = 'oklch(0.86 0.19 165 / 0.13)'; bd = G; col = G; }
+                else if (j === p) { bg = 'oklch(0.7 0.17 25 / 0.13)'; bd = R; col = R; }
+                else col = '#4A525C';
+              } else if (j === p) { bd = '#E8C555'; col = '#E8C555'; }
+              return { key: j, label,
+                click: () => { if (E.scored) return; this.setState(s => ({ ex: Object.assign({}, s.ex, { picked: Object.assign({}, s.ex.picked, { [i]: j }) }) })); },
+                style: `font-family:'IBM Plex Mono',monospace;font-size:15px;text-align:left;padding:14px 16px;background:${bg};border:1px solid ${bd};border-radius:6px;color:${col};cursor:${E.scored ? 'default' : 'pointer'};transition:all .18s ease;` };
+            }) };
+        }) };
+    })() : { exTitle: '', exCount: 0, exScored: false, exPct: 0, exVerdict: '', exSummary: '', exResultStyle: '',
+      exProgress: '', exSubmitLabel: '', exSubmitStyle: '', exSubmit: () => {}, exBack: () => {}, exQuestions: [],
+      exAttempt: 1, exRemedial: false, exRemedialHard: false, exRemedialList: [], exRemedialNote: '', exIntegrity: '', exIntegrityStyle: '', exShowCert: false, exCert: () => {} };
+    if (E && E.tid === '__final' && (exam.exVerdict === 'Graduated')) { /* pass recorded via passed.__final below */ }
+    const base = { statTracks: tracks.length, statFormulas: nF, statDrills: nD,
+      trackViews, doneCount, totalCount: total, ...exam,
+      ringDash: `${(C * frac).toFixed(1)} ${C.toFixed(1)}`,
+      isLesson: S.view === 'lesson', isSheet: S.view === 'sheet',
+      isHome: S.view === 'home', isExam: S.view === 'exam',
+      shieldOn: !!S.shield,
+      shieldTitle: S.shield ? S.shield.title : '', shieldMsg: S.shield ? S.shield.msg : '',
+      shieldDismiss: () => this.setState({ shield: null }),
+      appShellStyle: `min-height:100vh;background:#0B0C0E;color:#E7E9EC;font-family:'IBM Plex Sans',system-ui,sans-serif;display:grid;grid-template-columns:312px 1fr;${S.view === 'exam' && S.ex && !S.ex.scored ? 'user-select:none;-webkit-user-select:none;' : ''}${S.shield ? 'filter:blur(14px);pointer-events:none;' : ''}`,
+      showSheet: () => this.setState({ view: 'sheet' }),
+      showLesson: () => this.setState({ view: 'lesson' }),
+      threads: (this._threads || []).map(th => {
+        const op = !!S.open['thread-' + th.id];
+        return { key: th.id, n: th.n, line: th.line, why: th.why, open: op, count: th.steps.length + ' lessons',
+          style: `background:#111418;border:1px solid ${op ? '#2A3038' : '#1D2126'};border-radius:9px;overflow:hidden;transition:border-color .2s ease;`,
+          headStyle: 'display:flex;align-items:flex-start;gap:12px;width:100%;background:transparent;border:none;padding:18px 22px;cursor:pointer;color:#E7E9EC;font-family:inherit;',
+          caret: `font-size:11px;color:#5A626C;flex:none;padding-top:5px;transform:rotate(${op ? 90 : 0}deg);transition:transform .22s ease;`,
+          toggle: () => this.setState(s => ({ open: Object.assign({}, s.open, { ['thread-' + th.id]: !s.open['thread-' + th.id] }) })),
+          steps: th.steps.map(([lid, note], i) => {
+            const hit = flat.find(x => x.l.id === lid);
+            return { key: lid, title: hit ? hit.l.title : lid, note: note,
+              click: () => { if (!hit) return; this.setState(s => ({ open: Object.assign({}, s.open, { [hit.t.id]: true }) })); this.select(hit.t.id, hit.l.id); },
+              style: `display:flex;flex-direction:column;gap:3px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.45;background:#15191E;border:1px solid #1D2126;border-radius:7px;padding:10px 14px;cursor:pointer;transition:all .18s ease;` };
+          }) };
+      }),
+      hasQueue: Object.keys(S.queue || {}).length > 0,
+      queueCount: (() => { const n = Object.keys(S.queue || {}).length; return n + (n === 1 ? ' lesson' : ' lessons'); })(),
+      queueItems: Object.keys(S.queue || {}).map(k => {
+        const it = S.queue[k];
+        const hit = flat.find(x => x.l.id === it.lid);
+        return { key: k, title: it.text, kind: it.kind === 'write' ? 'written' : 'quiz',
+          misses: it.misses > 1 ? '×' + it.misses : '',
+          click: () => { if (!hit) return; this.setState(s => ({ open: Object.assign({}, s.open, { [hit.t.id]: true }) })); this.select(hit.t.id, hit.l.id); },
+          style: `display:flex;flex-direction:column;gap:4px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.4;background:#0F0D08;border:1px solid #2A2317;border-radius:7px;padding:11px 15px;cursor:pointer;transition:all .18s ease;` };
+      }),
+      themeIcon: S.light ? '☀' : '☾',
+      toggleTheme: () => this.setState(s => { this.applyTheme(!s.light); return { light: !s.light }; }),
+      showHome: () => { this.setState({ view: 'home' }); if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }); },
+      homeBtnStyle: `flex:1;font-family:'IBM Plex Mono',monospace;font-size:12px;background:${S.view === 'home' ? G : 'transparent'};color:${S.view === 'home' ? '#04140B' : '#9AA2AC'};border:1px solid ${S.view === 'home' ? G : '#1D2126'};border-radius:5px;padding:10px 12px;cursor:pointer;`,
+      homeParts: (TAG => [
+        { key: 1, tag: 'Opens with', tagStyle: TAG('#E8C555'), title: 'A fun fact', body: 'Where the idea came from, or where it quietly runs today. Quicksort was written to sort Russian words by someone who thought it impractical.' },
+        { key: 2, tag: 'Then', tagStyle: TAG('oklch(0.86 0.19 165)'), title: 'Why a CS major needs it', body: 'Every lesson names the thing in computing that breaks if you do not know this. No abstract motivation.' },
+        { key: 3, tag: 'Then', tagStyle: TAG('oklch(0.86 0.19 165)'), title: 'An analogy, then the derivation', body: 'A plain-language comparison, then four paragraphs deriving where the formula comes from and naming the mistake people make.' },
+        { key: 4, tag: 'Practice', tagStyle: TAG('#5CA8FF'), title: 'A match game and a live graph', body: 'Pair each formula to its meaning against a move counter. Nine lessons add a graph with sliders you drag to see the maths move.' },
+        { key: 5, tag: 'Practice', tagStyle: TAG('#5CA8FF'), title: 'Five timed drills', body: 'Type-and-enter reps with a streak counter and the answer revealed on a miss. Roughly 355 across the course.' },
+        { key: 6, tag: 'Proof', tagStyle: TAG('oklch(0.86 0.19 165)'), title: 'Quizzes and a track exam', body: 'Two graded questions per lesson, then a shuffled exam over the whole track with a 70% pass mark and a review plan if you miss.' }])(c => `font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:${c};`),
+      homeCtaLabel: doneCount ? 'Continue where you left off' : 'Start at the beginning',
+      allPassed: tracks.length > 0 && tracks.every(t => S.passed[t.id]),
+      graduated: !!S.passed['__final'],
+      finalNote: tracks.length && tracks.every(t => S.passed[t.id]) ? (S.passed['__final'] ? 'Passed — view your certificate' : '2 questions from every track · pass at 80%') : 'Unlocks when every track exam is passed',
+      startFinal: () => { if (!tracks.every(t => S.passed[t.id])) return; this.setState({ view: 'exam', ex: this.buildFinal(tracks), focusLost: 0 }); },
+      showCert: () => this.setState({ view: 'cert' }),
+      isCert: S.view === 'cert',
+      certDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      certTracks: tracks.map(t => ({ key: t.id, n: t.n })),
+      certPrint: () => window.print(),
+      notGraduated: !S.passed['__final'],
+      finalCardStyle: `display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:26px 28px;background:#14110C;border:1px solid ${tracks.length && tracks.every(t => S.passed[t.id]) ? '#E8C555' : '#2A2317'};border-radius:10px;opacity:${tracks.length && tracks.every(t => S.passed[t.id]) ? 1 : .55};transition:all .3s ease;`,
+      finalBtnStyle: `font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:${tracks.length && tracks.every(t => S.passed[t.id]) ? '#E8C555' : '#1D2126'};color:${tracks.length && tracks.every(t => S.passed[t.id]) ? '#14110C' : '#5A626C'};border:none;border-radius:6px;padding:14px 26px;cursor:${tracks.length && tracks.every(t => S.passed[t.id]) ? 'pointer' : 'not-allowed'};flex:none;`,
+      homeContinue: () => { this.setState({ view: 'lesson' }); this.save({}); },
+      homeStats: [{ key: 'a', n: total, label: 'lessons' }, { key: 'b', n: tracks.length, label: 'tracks' },
+        { key: 'c', n: nF, label: 'formulas' }, { key: 'd', n: nD, label: 'drill reps' },
+        { key: 'e', n: nQ, label: 'quiz questions' }],
+      homeTracks: tracks.map((t, i) => {
+        const dn = t.lessons.filter(x => S.done[x.id]).length;
+        return { key: t.id, num: String(i + 1).padStart(2, '0'), n: t.n, sub: t.sub,
+          frac: dn + '/' + t.lessons.length,
+          bar: `height:100%;width:${(dn / t.lessons.length * 100).toFixed(0)}%;background:oklch(0.86 0.19 165);border-radius:2px;transition:width .5s ease;`,
+          locked: !unlocked[t.id],
+          subLine: unlocked[t.id] ? t.sub : '🔒 Locked — pass the ' + (tracks[i - 1] ? tracks[i - 1].n : '') + ' exam to unlock',
+          style: `display:flex;align-items:center;gap:18px;padding:16px 18px;background:#111418;border:1px solid ${S.passed[t.id] ? 'oklch(0.86 0.19 165 / 0.35)' : '#1D2126'};border-radius:8px;opacity:${unlocked[t.id] ? 1 : .42};transition:all .2s ease;`,
+          open: () => { if (!unlocked[t.id]) return; this.setState(s => ({ open: Object.assign({}, s.open, { [t.id]: true }) })); this.select(t.id, t.lessons[0].id); },
+          exam: () => { if (!unlocked[t.id] || this.examBlocked(t)) return; this.setState({ view: 'exam', ex: this.buildExam(t), focusLost: 0 }); } };
+      }),
+      doPrint: () => window.print(),
+      resetProgress: () => { this.setState({ done: {}, ans: {} }); this.save({ done: {} }); },
+      sheetBtnStyle: `flex:1;font-family:'IBM Plex Mono',monospace;font-size:12px;background:${S.view === 'sheet' ? G : 'transparent'};color:${S.view === 'sheet' ? '#04140B' : '#9AA2AC'};border:1px solid ${S.view === 'sheet' ? G : '#1D2126'};border-radius:5px;padding:10px 12px;cursor:pointer;`,
+      sheet: tracks.map(t => ({ key: t.id, n: t.n,
+        rows: t.lessons.flatMap(l => l.f.map((f, i) => ({ key: l.id + i, label: f[0], expr: f[1] }))) })) };
+
+    if (!cur) return Object.assign(base, { title: 'Loading', crumb: '', position: '', cs: '', idea: '', formulas: [], quiz: [], mainStyle: 'opacity:.4;', doneBtnLabel: 'Mark complete', doneBtnStyle: '', prevLabel: 'Start', nextLabel: 'Next',
+      isHome: S.view === 'home', isExam: false, isCert: false, exRemedial: false, exRemedialList: [], exRemedialNote: '', exAttempt: 1,
+      allPassed: false, graduated: false, notGraduated: true, finalNote: '', finalCardStyle: '', finalBtnStyle: '', startFinal: () => {}, showCert: () => {}, certDate: '', certTracks: [], certPrint: () => {}, exShowCert: false, exCert: () => {},
+      themeIcon: '☾', toggleTheme: () => {}, threads: [], hasQueue: false, queueCount: '', queueItems: [],
+      homeStats: [], homeTracks: [], homeParts: [], homeBtnStyle: '', homeCtaLabel: 'Start',
+      homeContinue: () => {}, showHome: () => this.setState({ view: 'home' }),
+      analogy: '', hasFable: false, fable: '', explain: [], drTotal: 5, drIndex: 1, drQ: '', drVal: '', drStreak: 0, drSolved: 0, drDots: [],
+      drMsg: '', drMsgStyle: '', drInputStyle: '', drCardStyle: '', drillShellStyle: '', streakStyle: '',
+      drInput: () => {}, drKey: () => {}, drCheck: () => {}, drSkip: () => {}, drFresh: false, drFreshLabel: '', hasGraph: false,
+      frPrompt: '', frVal: '', frInput: () => {}, frInputStyle: '', frBtnLabel: 'Submit', frBtnStyle: '', frSubmit: () => {}, frHint: '', frHas: false, frScore: '', frVerdict: '', frFeedback: '', frOutStyle: '',
+      aiStyles: [], aiQ: '', aiInput: () => {}, aiKey: () => {}, aiAsk: () => {}, aiInputStyle: '', aiBtnLabel: 'Ask', aiBtnStyle: '', aiHas: false, aiMode: '', aiOut: '', aiOutStyle: '',
+      fact: '', hasCode: false, code: '', metaRead: '', metaFormulas: '', metaDrills: '', metaQuiz: '', mgPaired: '0 / 4', mgMoves: 0, mgPairedStyle: '', mgLeft: [], mgRight: [], mgReset: () => {}, mgMsg: '', mgMsgStyle: '' });
+
+    const { t, l } = cur;
+    const idx = flat.findIndex(x => x.l.id === l.id);
+    const per = S.ans[l.id] || {};
+
+    const quiz = (l.q || []).map((item, qi) => {
+      const a = per[qi] || {};
+      const isMC = item.t === 'mc';
+      const correct = isMC ? a.picked === item.a : a.checked && this.norm(a.value) === this.norm(item.a) || (item.alt || []).some(x => a.checked && this.norm(a.value) === this.norm(x));
+      const answered = isMC ? a.picked != null : !!a.checked;
+      const ok = !!correct;
+      return { key: qi, num: String(qi + 1).padStart(2, '0'), q: item.q, isMC, isIN: !isMC,
+        options: isMC ? item.o.map((label, i) => {
+          let bg = '#15191E', bd = '#1D2126', col = '#E7E9EC';
+          if (a.picked != null) {
+            if (i === item.a) { bg = 'oklch(0.86 0.19 165 / 0.13)'; bd = G; col = G; }
+            else if (i === a.picked) { bg = 'oklch(0.7 0.17 25 / 0.13)'; bd = R; col = R; }
+            else { col = '#4A525C'; }
+          }
+          return { key: i, label, click: () => this.setAns(qi, { picked: i }),
+            style: `font-family:'IBM Plex Mono',monospace;font-size:16px;text-align:left;padding:16px 18px;background:${bg};border:1px solid ${bd};border-radius:6px;color:${col};cursor:pointer;transition:all .18s ease;` };
+        }) : [],
+        value: a.value || '',
+        onInput: e => this.setAns(qi, { value: e.target.value, checked: false }),
+        onKey: e => { if (e.key === 'Enter') this.setAns(qi, { checked: true }); },
+        onCheck: () => { this.setAns(qi, { checked: true });
+        const v = this.norm(a.value);
+        const good = v === this.norm(item.a) || (item.alt || []).some(x => v === this.norm(x));
+        if (!good) this.addToQueue(l.id, 'quiz', l.title); },
+        onSteps: () => this.setAns(qi, { steps: !a.steps }),
+        stepsLabel: a.steps ? 'Hide steps' : 'Show steps',
+        showSteps: !!a.steps,
+        steps: (item.s || []).map((text, i) => ({ key: i, text })),
+        inputStyle: `font-size:17px;padding:12px 16px;width:200px;background:#0B0C0E;color:#E7E9EC;border:1px solid ${answered ? (ok ? G : R) : '#2A3038'};border-radius:5px;transition:border-color .2s ease;`,
+        answered, verdict: ok ? '✓ correct' : '✗ not quite',
+        explain: item.e,
+        feedbackStyle: `background:#0E1114;border:1px solid #1D2126;border-left:3px solid ${ok ? G : R};border-radius:5px;padding:18px 20px;color:${ok ? G : R};` };
+    });
+
+    const bsCells = [];
+    { const { lo, hi } = S.bs, T = 41, fin = lo === hi;
+      for (let i = 0; i < 64; i++) {
+        const inR = i >= lo && i <= hi, isT = i === T;
+        const bg = fin && isT ? G : inR ? (isT ? 'oklch(0.55 0.12 165)' : '#39424C') : '#191D22';
+        bsCells.push({ key: i, style: `flex:1;height:${inR ? 42 : 10}px;background:${bg};border-radius:2px;transition:height .35s cubic-bezier(.4,0,.2,1),background .35s ease;` });
+      } }
+    const bsDone = S.bs.lo === S.bs.hi;
+
+    const n = S.ri, w = 3 / n;
+    let sum = 0;
+    const riBars = [];
+    for (let i = 0; i < n; i++) { const x = (i + 1) * w, y = x * x; sum += y * w;
+      riBars.push({ key: i, style: `flex:1;height:${(y / 9) * 100}%;background:linear-gradient(180deg,${G},oklch(0.48 0.12 165));opacity:.85;border-radius:2px 2px 0 0;transition:height .4s cubic-bezier(.4,0,.2,1);` }); }
+    const riChoices = [2, 4, 8, 16, 64].map(v => ({ key: v, label: 'n = ' + v, click: () => this.setState({ ri: v }),
+      style: `font-family:'IBM Plex Mono',monospace;font-size:13px;background:${v === n ? G : 'transparent'};color:${v === n ? '#04140B' : '#9AA2AC'};border:1px solid ${v === n ? G : '#2A3038'};border-radius:5px;padding:10px 16px;cursor:pointer;transition:all .15s ease;` }));
+
+    const p = S.tt.p, q = S.tt.q;
+    const bool = b => b ? 'T' : 'F';
+    const ttCells = [['p', p], ['q', q], ['p ∧ q', p && q], ['p ∨ q', p || q], ['p → q', !p || q]].map(([label, v], i) => ({
+      key: i, label, val: bool(v),
+      style: `padding:16px;background:#15191E;border:1px solid ${v ? G : '#1D2126'};border-radius:6px;color:${v ? G : '#6E7681'};transition:all .25s ease;` }));
+
+    const dep = (S.depth || {})[l.id] || {};
+    const fallbackDrills = dep.d || [];
+    const isGen = !!(this._make && this._genIds && this._genIds.indexOf(l.id) >= 0);
+    const dl = isGen ? this._make(l.id, S.drSeed, fallbackDrills, 5) : fallbackDrills;
+    const D = S.dr;
+    const fin = dl.length > 0 && D.i >= dl.length;
+    const di = Math.min(D.i, Math.max(dl.length - 1, 0));
+    const item = dl[di] || ['', ''];
+    const okNow = D.status === 'ok', noNow = D.status === 'no';
+    const mark = (i, v) => { const h = D.hist.slice(); h[i] = v; return h; };
+    const advance = () => this.setState(s => ({ dr: Object.assign({}, s.dr, { i: s.dr.i + 1, val: '', status: null }) }));
+
+    const drill = {
+      drTotal: dl.length, drIndex: fin ? dl.length : di + 1,
+      drQ: fin ? 'Set complete.' : item[0],
+      drVal: D.val, drStreak: D.streak, drSolved: D.solved,
+      drInput: e => this.setState(s => ({ dr: Object.assign({}, s.dr, { val: e.target.value, status: null }) })),
+      drKey: e => { if (e.key === 'Enter') drillCheck(); },
+      drCheck: () => drillCheck(),
+      drSkip: () => { if (fin) return drillRestart(); this.addToQueue(l.id, 'quiz', l.title); this.setState(s => ({ dr: Object.assign({}, s.dr, { i: s.dr.i + 1, val: '', status: null, streak: 0, hist: mark(di, 0) }) })); },
+      drFresh: isGen,
+      drFreshLabel: isGen ? 'fresh numbers every round — nothing to memorise' : '',
+      drDots: (dl.length ? dl : [0, 0, 0, 0, 0]).map((_, i) => ({ key: i,
+        style: `flex:1;height:4px;border-radius:2px;background:${D.hist[i] === 1 ? G : D.hist[i] === 0 ? R : i === di && !fin ? '#39424C' : '#1D2126'};transition:background .3s ease;` })),
+      drMsg: fin ? `${D.solved} of ${dl.length} solved on the first try.${isGen ? ' Skip to generate a new set.' : ''}` : okNow ? '✓ correct' : noNow ? `answer: ${item[1]}` : '',
+      drMsgStyle: `font-family:'IBM Plex Mono',monospace;font-size:14px;color:${okNow ? G : noNow ? R : '#6E7681'};transition:color .2s ease;`,
+      drInputStyle: `font-size:18px;padding:13px 16px;width:190px;background:#0B0C0E;color:#E7E9EC;border:1px solid ${okNow ? G : noNow ? R : '#2A3038'};border-radius:5px;transition:border-color .2s ease;`,
+      drCardStyle: `display:flex;flex-direction:column;gap:16px;padding:24px;background:#0B0C0E;border:1px solid ${okNow ? G : noNow ? R : '#1D2126'};border-radius:8px;transition:border-color .25s ease;`,
+      drillShellStyle: 'background:#111418;border:1px solid #1D2126;border-radius:8px;padding:26px;display:flex;flex-direction:column;gap:20px;',
+      streakStyle: `font-size:32px;line-height:1;color:${D.streak > 0 ? G : '#4A525C'};display:inline-block;transform:scale(${okNow ? 1.22 : 1});transition:transform .25s cubic-bezier(.3,1.6,.5,1),color .25s ease;`
+    };
+    const drillRestart = () => this.setState(s => ({ drSeed: (s.drSeed * 1103515245 + 12345) % 2147483647 || 7,
+      dr: { i: 0, val: '', status: null, streak: 0, solved: 0, hist: [] } }));
+    const drillCheck = () => {
+      if (fin) return drillRestart();
+      if (D.status === 'ok') return;
+      const v = this.norm(D.val);
+      if (!v) return;
+      const good = v === this.norm(item[1]) || (item[2] || []).some(x => v === this.norm(x));
+      if (good) {
+        this.setState(s => ({ dr: Object.assign({}, s.dr, { status: 'ok', streak: s.dr.streak + 1, solved: s.dr.solved + 1, hist: mark(di, 1) }) }));
+        clearTimeout(this._drT);
+        this._drT = setTimeout(advance, 700);
+      } else {
+        this.setState(s => ({ dr: Object.assign({}, s.dr, { status: 'no', streak: 0, hist: mark(di, 0) }) }));
+      }
+    };
+
+    const M = S.mg, mf = l.f.slice(0, 5), mn = mf.length;
+    const mOrder = M.order || this.shuffle(mn, (l.id.length * 7919 + mn * 131) % 99991 + 1);
+    const mDone = M.done || [];
+    const allDone = mDone.length === mn;
+    const mPick = (side, i) => {
+      if (mDone.indexOf(i) >= 0) return;
+      if (!M.sel) return this.setState(s => ({ mg: Object.assign({}, s.mg, { order: mOrder, sel: { side, i }, wrong: null }) }));
+      if (M.sel.side === side) return this.setState(s => ({ mg: Object.assign({}, s.mg, { sel: { side, i }, wrong: null }) }));
+      const hit = M.sel.i === i;
+      this.setState(s => ({ mg: Object.assign({}, s.mg, { order: mOrder, sel: null, moves: s.mg.moves + 1,
+        done: hit ? mDone.concat([i]) : mDone, wrong: hit ? null : i }) }));
+      if (!hit) { clearTimeout(this._mgT); this._mgT = setTimeout(() => this.setState(s => ({ mg: Object.assign({}, s.mg, { wrong: null }) })), 550); }
+    };
+    const mStyle = (i, side) => {
+      const done = mDone.indexOf(i) >= 0;
+      const sel = M.sel && M.sel.side === side && M.sel.i === i;
+      const bad = M.wrong === i;
+      const bd = done ? G : bad ? R : sel ? '#E8C555' : '#2A3038';
+      return `font-family:'IBM Plex Mono',monospace;font-size:15px;line-height:1.45;text-align:left;padding:14px 16px;background:${done ? 'oklch(0.86 0.19 165 / 0.1)' : bad ? 'oklch(0.7 0.17 25 / 0.12)' : '#15191E'};border:1px solid ${bd};border-radius:6px;color:${done ? G : '#E7E9EC'};cursor:${done ? 'default' : 'pointer'};opacity:${done ? .65 : 1};transition:all .22s ease;transform:${bad ? 'translateX(3px)' : 'none'};`;
+    };
+    const game = {
+      mgPaired: mDone.length + ' / ' + mn, mgMoves: M.moves,
+      mgPairedStyle: `font-size:32px;line-height:1;color:${allDone ? G : '#E7E9EC'};animation:${allDone ? 'pop .5s ease' : 'none'};`,
+      mgLeft: mf.map((f, i) => ({ key: i, label: f[1], click: () => mPick('L', i), style: mStyle(i, 'L') })),
+      mgRight: mOrder.map((idx, pos) => ({ key: pos, label: mf[idx][0] + ' — ' + mf[idx][2], click: () => mPick('R', idx), style: mStyle(idx, 'R') })),
+      mgReset: () => this.setState({ mg: { order: this.shuffle(mn, Math.floor(Math.random() * 99991) + 1), sel: null, done: [], moves: 0, wrong: null } }),
+      mgMsg: allDone ? (M.moves === mn ? `Perfect — ${mn} pairs in ${mn} moves.` : `Cleared in ${M.moves} moves. Perfect is ${mn}.`) : M.sel ? 'Now pick its match on the other side.' : 'Click a formula, then its meaning.',
+      mgMsgStyle: `font-family:'IBM Plex Mono',monospace;font-size:14px;color:${allDone ? G : '#6E7681'};`
+    };
+
+    let graph = { hasGraph: false };
+    const gdef = l.graph && this.gdefs()[l.graph];
+    if (gdef) {
+      const v = {};
+      gdef.sliders.forEach(sl => { const c = (S.g || {})[sl.k]; v[sl.k] = c == null ? sl.def : c; });
+      const xr = typeof gdef.x === 'function' ? gdef.x(v) : gdef.x;
+      const yr = typeof gdef.y === 'function' ? gdef.y(v) : gdef.y;
+      const W = 640, H = 320, span = yr[1] - yr[0];
+      const PX = x => (x - xr[0]) / (xr[1] - xr[0]) * W;
+      const PY = y => H - (y - yr[0]) / span * H;
+      const curves = gdef.curves(v);
+      graph = { hasGraph: true, gTitle: gdef.title(v),
+        gZeroY: Math.max(2, Math.min(H - 2, PY(0))).toFixed(1),
+        gZeroX: Math.max(2, Math.min(W - 2, PX(0))).toFixed(1),
+        gCurves: curves.filter(c => c.fn).map((c, i) => {
+          const pts = [];
+          for (let j = 0; j <= 160; j++) {
+            const x = xr[0] + (xr[1] - xr[0]) * j / 160;
+            let y = c.fn(x);
+            if (!isFinite(y)) continue;
+            y = Math.max(yr[0] - span, Math.min(yr[1] + span, y));
+            pts.push(PX(x).toFixed(1) + ',' + PY(y).toFixed(1));
+          }
+          return { key: i, pts: pts.join(' '), color: c.color };
+        }),
+        gDots: (gdef.dots ? gdef.dots(v) : []).map((d, i) => ({ key: i, x: PX(d.x).toFixed(1), y: PY(Math.max(yr[0], Math.min(yr[1], d.y))).toFixed(1), r: d.r || 4, fill: d.fill || 'none', stroke: d.stroke })),
+        gLegend: curves.map((c, i) => ({ key: i, label: c.label,
+          style: `display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:${c.color};`,
+          swatch: `display:inline-block;width:14px;height:3px;border-radius:2px;background:${c.color};` })),
+        gSliders: gdef.sliders.map(sl => ({ key: sl.k, label: sl.label, min: sl.min, max: sl.max, step: sl.step, value: v[sl.k],
+          onSlide: e => { const val = parseFloat(e.target.value); this.setState(s => ({ g: Object.assign({}, s.g, { [sl.k]: val }) })); } })),
+        gNote: gdef.note(v) };
+    }
+
+    const A = S.ai;
+    const ai = {
+      aiStyles: this.STYLES.map(([label, instruction]) => ({ key: label, label,
+        click: () => this.runAI(label, instruction, null),
+        style: `font-family:'IBM Plex Mono',monospace;font-size:12.5px;background:${A.mode === label ? '#8FA0C9' : '#15191E'};color:${A.mode === label ? '#0B0C0E' : '#C6CCD4'};border:1px solid ${A.mode === label ? '#8FA0C9' : '#232830'};border-radius:100px;padding:9px 16px;cursor:${A.busy ? 'wait' : 'pointer'};transition:all .18s ease;` })),
+      aiQ: A.q,
+      aiInput: e => this.setState(s => ({ ai: Object.assign({}, s.ai, { q: e.target.value }) })),
+      aiKey: e => { if (e.key === 'Enter' && A.q.trim()) this.runAI('Your question', null, A.q.trim()); },
+      aiAsk: () => { if (A.q.trim()) this.runAI('Your question', null, A.q.trim()); },
+      aiInputStyle: `flex:1;min-width:240px;font-size:16px;padding:12px 16px;background:#0B0C0E;color:#E7E9EC;border:1px solid #232830;border-radius:6px;`,
+      aiBtnLabel: A.busy ? 'Thinking…' : 'Ask',
+      aiBtnStyle: `font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:${A.busy ? '#1D2126' : '#8FA0C9'};color:${A.busy ? '#5A626C' : '#0B0C0E'};border:none;border-radius:6px;padding:12px 24px;cursor:${A.busy ? 'wait' : 'pointer'};transition:all .2s ease;`,
+      aiHas: !!(A.out || A.busy),
+      aiMode: A.busy ? A.mode + ' · thinking…' : A.mode,
+      aiOut: A.out || '',
+      aiOutStyle: `background:#0B0C0E;border:1px solid #232830;border-left:3px solid #8FA0C9;border-radius:7px;padding:22px 24px;animation:rise .35s ease both;opacity:${A.busy ? .55 : 1};transition:opacity .3s ease;`
+    };
+
+    const FR = S.fr;
+    const frOK = FR.score != null && FR.score >= 4;
+    const fr = {
+      frPrompt: l.idea.replace(/\.$/, '') + ' — explain this in your own words and justify why it is true.',
+      frVal: FR.val,
+      frInput: e => this.setState(s => ({ fr: Object.assign({}, s.fr, { val: e.target.value }) })),
+      frInputStyle: `width:100%;box-sizing:border-box;min-height:130px;resize:vertical;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:16px;line-height:1.65;padding:16px;background:#0B0C0E;color:#E7E9EC;border:1px solid ${FR.score == null ? '#232830' : frOK ? G : '#E8C555'};border-radius:7px;transition:border-color .25s ease;`,
+      frBtnLabel: FR.busy ? 'Marking…' : 'Submit for marking',
+      frBtnStyle: `font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:${FR.busy || FR.val.trim().length < 12 ? '#1D2126' : '#E8C555'};color:${FR.busy || FR.val.trim().length < 12 ? '#5A626C' : '#14110C'};border:none;border-radius:6px;padding:13px 26px;cursor:${FR.busy || FR.val.trim().length < 12 ? 'not-allowed' : 'pointer'};transition:all .2s ease;`,
+      frSubmit: () => this.gradeFR(),
+      frHint: FR.val.trim().length < 12 ? 'Write at least a sentence.' : FR.busy ? 'An examiner is reading your answer.' : 'Scores under 4 are added to your review queue.',
+      frHas: !!(FR.feedback || FR.busy),
+      frScore: FR.score == null ? '—' : FR.score + ' / 5',
+      frVerdict: FR.busy ? 'marking' : FR.score == null ? '' : FR.score >= 4 ? 'solid' : FR.score >= 2 ? 'partial — queued for review' : 'not there yet — queued for review',
+      frFeedback: FR.feedback,
+      frOutStyle: `background:#0B0C0E;border:1px solid #232830;border-left:3px solid ${FR.score == null ? '#E8C555' : frOK ? G : '#E8C555'};border-radius:7px;padding:22px 24px;color:${FR.score == null ? '#E8C555' : frOK ? G : '#E8C555'};animation:rise .35s ease both;opacity:${FR.busy ? .55 : 1};transition:opacity .3s ease;`
+    };
+
+    return Object.assign(base, drill, graph, game, ai, fr, {
+      fact: (S.facts || {})[l.id] || '',
+      hasCode: !!l.code, code: l.code || '',
+      metaRead: Math.max(4, Math.round(((dep.ex || []).join(' ').split(' ').length + (l.cs || '').split(' ').length) / 150) + 4) + ' min read',
+      metaFormulas: l.f.length + ' formulas',
+      metaDrills: dl.length + ' drills',
+      metaQuiz: (l.q || []).length + ' quiz questions',
+      analogy: dep.an || '',
+      hasFable: !!dep.fb, fable: dep.fb || '',
+      explain: (dep.ex || []).map((text, i) => ({ key: i, num: String(i + 1).padStart(2, '0'), text })),
+      crumb: t.n, position: `Lesson ${idx + 1} of ${total}`,
+      title: l.title, cs: l.cs, idea: l.idea,
+      formulas: l.f.map((f, i) => ({ key: i, label: f[0], expr: f[1], note: f[2] })),
+      quiz,
+      mainStyle: `opacity:${S.entering ? 0 : 1};transform:translateY(${S.entering ? 14 : 0}px);transition:opacity .35s ease,transform .4s cubic-bezier(.2,.7,.3,1);animation:rise .45s cubic-bezier(.2,.7,.3,1) both;`,
+      demoBinary: l.demo === 'binarySearch', demoRiemann: l.demo === 'riemann', demoTruth: l.demo === 'truthTable',
+      bsCells, bsSteps: S.bs.steps, bsLeft: S.bs.hi - S.bs.lo + 1,
+      bsNote: bsDone ? `found — ${S.bs.steps} comparisons over 64 items = log₂(64)` : '// each call discards half the range',
+      bsStep: () => this.setState(s => { const { lo, hi, steps } = s.bs; if (lo >= hi) return null;
+        const mid = Math.floor((lo + hi) / 2);
+        return { bs: mid < 41 ? { lo: mid + 1, hi, steps: steps + 1 } : { lo, hi: mid, steps: steps + 1 } }; }),
+      bsReset: () => this.setState({ bs: { lo: 0, hi: 63, steps: 0 } }),
+      riBars, riChoices, riEstimate: sum.toFixed(3),
+      riNote: `${n} rectangles overshoot by ${(sum - 9).toFixed(3)}`,
+      ttCells, ttPVal: bool(p), ttQVal: bool(q),
+      ttP: () => this.setState(s => ({ tt: { p: !s.tt.p, q: s.tt.q } })),
+      ttQ: () => this.setState(s => ({ tt: { p: s.tt.p, q: !s.tt.q } })),
+      ttPStyle: `font-family:'IBM Plex Mono',monospace;font-size:14px;background:${p ? G : 'transparent'};color:${p ? '#04140B' : '#9AA2AC'};border:1px solid ${p ? G : '#2A3038'};border-radius:5px;padding:11px 22px;cursor:pointer;transition:all .2s ease;`,
+      ttQStyle: `font-family:'IBM Plex Mono',monospace;font-size:14px;background:${q ? G : 'transparent'};color:${q ? '#04140B' : '#9AA2AC'};border:1px solid ${q ? G : '#2A3038'};border-radius:5px;padding:11px 22px;cursor:pointer;transition:all .2s ease;`,
+      ttNote: !p || q ? '// implication holds — a false premise makes it vacuously true' : '// the only failing case: premise true, conclusion false',
+      toggleDone: () => this.setState(s => { const d = Object.assign({}, s.done, { [l.id]: !s.done[l.id] }); this.save({ done: d }); return { done: d }; }),
+      doneBtnLabel: S.done[l.id] ? '✓ Completed' : 'Mark complete',
+      doneBtnStyle: `font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;background:${S.done[l.id] ? G : 'transparent'};color:${S.done[l.id] ? '#04140B' : G};border:1px solid ${S.done[l.id] ? G : 'oklch(0.86 0.19 165 / 0.32)'};border-radius:5px;padding:12px 24px;cursor:pointer;transition:all .2s ease;`,
+      prev: () => this.go(-1), next: () => this.go(1),
+      prevLabel: flat[idx - 1] ? flat[idx - 1].l.title : 'Start',
+      nextLabel: flat[idx + 1] ? flat[idx + 1].l.title : 'End' });
+  }
+}
+</script>
+</body>
+</html>

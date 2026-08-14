@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="page">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#0B0C0E;}
+  a{color:oklch(0.82 0.16 152);text-decoration:none;}
+  a:hover{color:oklch(0.9 0.16 152);}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0B0C0E;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#E7E9EC;padding:0 0 96px;">
+
+  <div style="border-bottom:1px solid #1D2126;padding:14px 40px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6E7681;">
+    <span>~/tracks/precalculus/12-logarithms</span>
+    <span style="color:oklch(0.82 0.16 152);">● 11 / 19 complete</span>
+  </div>
+
+<div style="max-width:960px;margin:0 auto;padding:56px 40px 0;display:flex;flex-direction:column;gap:52px;">
+
+  <header style="display:flex;flex-direction:column;gap:16px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.82 0.16 152);">Lesson 12</div>
+    <h1 style="margin:0;font-size:72px;line-height:.98;font-weight:600;letter-spacing:-.035em;">Logarithms</h1>
+    <p style="margin:0;font-size:19px;line-height:1.6;color:#9AA2AC;max-width:58ch;">The single most useful function in computer science, and the one almost everybody skipped.</p>
+  </header>
+
+  <section style="background:#111418;border:1px solid #1D2126;border-radius:6px;overflow:hidden;">
+    <div style="background:#15191E;padding:11px 22px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.82 0.16 152);border-bottom:1px solid #1D2126;">// why a CS major needs this</div>
+    <p style="margin:0;padding:26px 22px;font-size:18px;line-height:1.7;color:#C6CCD4;">Every time you halve a problem instead of walking through it, a logarithm shows up in the running time. Binary search, balanced trees, merge sort, heap operations, the depth of a divide-and-conquer recursion — all <span style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:oklch(0.82 0.16 152);">O(log n)</span>. Understand what a logarithm counts and you can read those running times straight off the algorithm.</p>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:22px;">
+    <h2 style="margin:0;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">The idea in one sentence</h2>
+    <p style="margin:0;font-size:30px;line-height:1.4;font-weight:500;letter-spacing:-.02em;max-width:42ch;">A logarithm asks a counting question: how many times do I multiply the base by itself to get here?</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      <div style="background:#111418;border:1px solid #1D2126;border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6E7681;">Definition</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:#E7E9EC;">log_b(x) = y ⟺ b^y = x</div>
+        <div style="font-size:14px;line-height:1.5;color:#8A929C;">Same fact, two directions.</div>
+      </div>
+      <div style="background:#111418;border:1px solid #1D2126;border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6E7681;">Product rule</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:#E7E9EC;">log(xy) = log x + log y</div>
+        <div style="font-size:14px;line-height:1.5;color:#8A929C;">Multiplication becomes addition.</div>
+      </div>
+      <div style="background:#111418;border:1px solid #1D2126;border-radius:6px;padding:22px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6E7681;">Change of base</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:#E7E9EC;">log_b x = ln x / ln b</div>
+        <div style="font-size:14px;line-height:1.5;color:#8A929C;">Why Big-O ignores the base.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#111418;border:1px solid #1D2126;border-radius:6px;padding:28px;display:flex;flex-direction:column;gap:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.82 0.16 152);">Run it</div>
+        <div style="font-size:20px;font-weight:500;">binary_search(sorted[64], target=41)</div>
+      </div>
+      <div style="display:flex;gap:26px;font-family:'IBM Plex Mono',monospace;">
+        <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">STEPS</span><span style="font-size:34px;line-height:1;color:oklch(0.82 0.16 152);">{{ steps }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:5px;"><span style="font-size:10px;letter-spacing:.14em;color:#6E7681;">RANGE</span><span style="font-size:34px;line-height:1;">{{ remaining }}</span></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:3px;align-items:flex-end;height:46px;">
+      <sc-for list="{{ cells }}" as="c" hint-placeholder-count="64">
+        <div style="{{ c.style }}"></div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button onClick="{{ step }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:oklch(0.82 0.16 152);color:#07130C;border:none;border-radius:4px;padding:12px 24px;cursor:pointer;font-weight:600;" style-hover="background:oklch(0.9 0.16 152);">halve()</button>
+      <button onClick="{{ reset }}" style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:transparent;color:#9AA2AC;border:1px solid #2A3038;border-radius:4px;padding:12px 20px;cursor:pointer;" style-hover="color:#E7E9EC;border-color:#4A525C;">reset()</button>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#6E7681;">{{ demoNote }}</span>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:20px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#6E7681;">Check yourself</div>
+    <p style="margin:0;font-size:24px;line-height:1.45;font-weight:500;max-width:50ch;">A sorted array holds 1,048,576 records. Worst-case number of comparisons for a binary search?</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+      <sc-for list="{{ options }}" as="o" hint-placeholder-count="4">
+        <button onClick="{{ o.click }}" style="{{ o.style }}">{{ o.label }}</button>
+      </sc-for>
+    </div>
+    <sc-if value="{{ answered }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ feedbackStyle }}">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;">{{ verdict }}</div>
+        <p style="margin:0;font-size:17px;line-height:1.65;color:#C6CCD4;">Each comparison throws away half the array, so the count is how many halvings reduce 1,048,576 to 1: log₂(1,048,576) = 20, because 2²⁰ = 1,048,576. A linear scan would take up to a million comparisons for the same answer.</p>
+      </div>
+    </sc-if>
+  </section>
+
+  <footer style="border-top:1px solid #1D2126;padding-top:22px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6E7681;">
+    <span>← exponential-growth</span>
+    <span style="color:oklch(0.82 0.16 152);">next: sequences-and-series →</span>
+  </footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showCsPayoff&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;oklch(0.82 0.16 152)&quot;,&quot;options&quot;:[&quot;oklch(0.82 0.16 152)&quot;,&quot;oklch(0.82 0.16 85)&quot;,&quot;oklch(0.78 0.15 250)&quot;,&quot;oklch(0.78 0.17 330)&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { lo: 0, hi: 63, steps: 0, picked: null };
+  target = 41;
+  step = () => this.setState(s => {
+    if (s.lo >= s.hi) return null;
+    const mid = Math.floor((s.lo + s.hi) / 2);
+    return mid < this.target ? { lo: mid + 1, steps: s.steps + 1 } : { hi: mid, steps: s.steps + 1 };
+  });
+  reset = () => this.setState({ lo: 0, hi: 63, steps: 0 });
+  renderVals() {
+    const { lo, hi, steps, picked } = this.state;
+    const done = lo === hi;
+    const green = 'oklch(0.82 0.16 152)';
+    const cells = [];
+    for (let i = 0; i < 64; i++) {
+      const inR = i >= lo && i <= hi;
+      const isT = i === this.target;
+      const bg = done && isT ? green : inR ? (isT ? 'oklch(0.5 0.1 152)' : '#39424C') : '#191D22';
+      cells.push({ key: i, style: `flex:1;height:${inR ? 42 : 10}px;background:${bg};border-radius:2px;transition:height .35s cubic-bezier(.4,0,.2,1),background .35s ease;` });
+    }
+    const labels = ['20', '512', '1,024', '1,000,000'];
+    const options = labels.map((label, i) => {
+      let bg = '#111418', bd = '#1D2126', col = '#E7E9EC';
+      if (picked !== null) {
+        if (i === 0) { bg = 'rgba(80,200,140,.12)'; bd = green; col = green; }
+        else if (i === picked) { bg = 'rgba(220,90,80,.12)'; bd = 'oklch(0.66 0.17 25)'; col = 'oklch(0.72 0.17 25)'; }
+        else { col = '#4A525C'; }
+      }
+      return { key: i, label, click: () => this.setState({ picked: i }),
+        style: `font-family:'IBM Plex Mono',monospace;font-size:19px;padding:20px 12px;background:${bg};border:1px solid ${bd};border-radius:5px;color:${col};cursor:pointer;transition:all .2s ease;` };
+    });
+    return { cells, steps, remaining: hi - lo + 1, step: this.step, reset: this.reset, options,
+      demoNote: done ? `found — ${steps} comparisons over 64 items = log₂(64)` : '// each call discards half the range',
+      answered: picked !== null,
+      verdict: picked === 0 ? '✓ correct' : '✗ not quite',
+      feedbackStyle: `background:#111418;border:1px solid #1D2126;border-left:3px solid ${picked === 0 ? green : 'oklch(0.66 0.17 25)'};border-radius:5px;padding:22px 24px;color:${picked === 0 ? green : 'oklch(0.72 0.17 25)'};` };
+  }
+}
+</script>
+</body>
+</html>
