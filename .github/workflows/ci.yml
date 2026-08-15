@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The course is data, so a bad answer index or an empty exam pool is a
+      # content bug that never reaches a type error. This catches those first.
+      - name: Audit course content
+        run: npm run audit
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          # The build must not need a key — the AI panels degrade to an
+          # unconfigured notice rather than failing the page.
+          ANTHROPIC_API_KEY: ""

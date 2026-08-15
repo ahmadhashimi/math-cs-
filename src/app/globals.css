@@ -1,0 +1,359 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens.
+ *
+ * Every colour in the app comes from this file. The palette is defined twice —
+ * once for the dark theme (the default, and what the course was designed in)
+ * and once for light. Components reference the semantic names only, so a theme
+ * swap never needs a component edit.
+ */
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-inset: var(--inset);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-faint: var(--ink-faint);
+  --color-ink-ghost: var(--ink-ghost);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+
+  --color-gold: var(--gold);
+  --color-gold-ink: var(--gold-ink);
+  --color-gold-dim: var(--gold-dim);
+  --color-gold-surface: var(--gold-surface);
+  --color-gold-inset: var(--gold-inset);
+  --color-gold-line: var(--gold-line);
+
+  /*
+   * Chart series. The multi-series figures plot ordered quantities (growth
+   * rates, sequence terms), so this is a sequential ramp in the accent hue —
+   * one hue, light to dark — rather than a set of categorical hues. Identity
+   * is carried by the legend and the direct labels; the ramp only has to stay
+   * monotonic and hold 3:1 against the chart surface, which it does in both
+   * themes.
+   */
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-series-5: var(--series-5);
+
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-danger-line: var(--danger-line);
+
+  --font-sans: var(--font-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-serif: var(--font-plex-serif), Georgia, serif;
+
+  --ease-out-soft: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Dark — the default theme. */
+:root {
+  color-scheme: dark;
+
+  --bg: #0b0c0e;
+  --surface: #111418;
+  --surface-2: #15191e;
+  --surface-3: #0e1013;
+  --inset: #0b0c0e;
+
+  --line: #1d2126;
+  --line-strong: #2a3038;
+
+  --ink: #e7e9ec;
+  --ink-muted: #9aa2ac;
+  --ink-dim: #6e7681;
+  --ink-faint: #5a626c;
+  --ink-ghost: #333941;
+
+  --accent: oklch(0.86 0.19 165);
+  --accent-hover: oklch(0.92 0.19 165);
+  --accent-ink: #04140b;
+  --accent-soft: oklch(0.86 0.19 165 / 0.13);
+  --accent-line: oklch(0.86 0.19 165 / 0.35);
+
+  --gold: #e8c555;
+  --gold-ink: #d8cfb8;
+  --gold-dim: #8a7a3c;
+  --gold-surface: #14110c;
+  --gold-inset: #0f0d08;
+  --gold-line: #2a2317;
+
+  --series-1: #6cffd0;
+  --series-2: #00ebaa;
+  --series-3: #00c589;
+  --series-4: #00a16f;
+  --series-5: #00815a;
+
+  --danger: oklch(0.7 0.17 25);
+  --danger-soft: oklch(0.7 0.17 25 / 0.13);
+  --danger-line: oklch(0.7 0.17 25 / 0.4);
+}
+
+/*
+ * Light — a real palette, not an inverted filter. Defined once under its own
+ * names, then assigned by the two selectors that can turn light on: an explicit
+ * choice, or a system preference with no explicit choice to override it.
+ */
+:root {
+  --l-bg: #f6f5f2;
+  --l-surface: #ffffff;
+  --l-surface-2: #f1efea;
+  --l-surface-3: #fbfaf8;
+  --l-inset: #f6f5f2;
+
+  --l-line: #e3e0d9;
+  --l-line-strong: #cbc7bd;
+
+  --l-ink: #14171b;
+  --l-ink-muted: #4c545e;
+  --l-ink-dim: #6b737d;
+  --l-ink-faint: #8b939d;
+  --l-ink-ghost: #c3c8cf;
+
+  --l-accent: oklch(0.55 0.15 165);
+  --l-accent-hover: oklch(0.47 0.15 165);
+  --l-accent-ink: #ffffff;
+  --l-accent-soft: oklch(0.55 0.15 165 / 0.12);
+  --l-accent-line: oklch(0.55 0.15 165 / 0.45);
+
+  --l-gold: oklch(0.52 0.13 80);
+  --l-gold-ink: #4a3f22;
+  --l-gold-dim: #8a7238;
+  --l-gold-surface: #fbf6e8;
+  --l-gold-inset: #f5eeda;
+  --l-gold-line: #e4d8b0;
+
+  --l-series-1: #00a16f;
+  --l-series-2: #008d59;
+  --l-series-3: #007647;
+  --l-series-4: #005f38;
+  --l-series-5: #00482a;
+
+  --l-danger: oklch(0.5 0.19 25);
+  --l-danger-soft: oklch(0.5 0.19 25 / 0.1);
+  --l-danger-line: oklch(0.5 0.19 25 / 0.45);
+}
+
+/*
+ * The theme is resolved before paint by the inline script in the root layout
+ * (stored choice, else the system preference), which stamps data-theme on
+ * <html>. That keeps this a single selector with no duplicated palette.
+ */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: var(--l-bg);
+  --surface: var(--l-surface);
+  --surface-2: var(--l-surface-2);
+  --surface-3: var(--l-surface-3);
+  --inset: var(--l-inset);
+
+  --line: var(--l-line);
+  --line-strong: var(--l-line-strong);
+
+  --ink: var(--l-ink);
+  --ink-muted: var(--l-ink-muted);
+  --ink-dim: var(--l-ink-dim);
+  --ink-faint: var(--l-ink-faint);
+  --ink-ghost: var(--l-ink-ghost);
+
+  --accent: var(--l-accent);
+  --accent-hover: var(--l-accent-hover);
+  --accent-ink: var(--l-accent-ink);
+  --accent-soft: var(--l-accent-soft);
+  --accent-line: var(--l-accent-line);
+
+  --gold: var(--l-gold);
+  --gold-ink: var(--l-gold-ink);
+  --gold-dim: var(--l-gold-dim);
+  --gold-surface: var(--l-gold-surface);
+  --gold-inset: var(--l-gold-inset);
+  --gold-line: var(--l-gold-line);
+
+  --series-1: var(--l-series-1);
+  --series-2: var(--l-series-2);
+  --series-3: var(--l-series-3);
+  --series-4: var(--l-series-4);
+  --series-5: var(--l-series-5);
+
+  --danger: var(--l-danger);
+  --danger-soft: var(--l-danger-soft);
+  --danger-line: var(--l-danger-line);
+}
+
+/*
+ * Element defaults belong in @layer base. Unlayered rules outrank every layered
+ * one, so a bare `a { color: … }` here would beat any text-* utility on a link
+ * — which is exactly the kind of bug that hides a label on its own background.
+ */
+@layer base {
+  html,
+  body {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  body {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-wrap: break-word;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  /* Links inherit their colour; a text-* utility decides it per link. */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  input,
+  textarea {
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  input[type="range"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* Motion. Sections rise in rather than popping, staggered down the page. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.28);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.5s var(--ease-out-soft) both;
+}
+
+.animate-pop {
+  animation: pop 0.5s ease;
+}
+
+[data-stagger] > * {
+  animation: rise 0.5s var(--ease-out-soft) both;
+}
+[data-stagger] > *:nth-child(1) {
+  animation-delay: 0.02s;
+}
+[data-stagger] > *:nth-child(2) {
+  animation-delay: 0.06s;
+}
+[data-stagger] > *:nth-child(3) {
+  animation-delay: 0.1s;
+}
+[data-stagger] > *:nth-child(4) {
+  animation-delay: 0.14s;
+}
+[data-stagger] > *:nth-child(5) {
+  animation-delay: 0.18s;
+}
+[data-stagger] > *:nth-child(6) {
+  animation-delay: 0.22s;
+}
+[data-stagger] > *:nth-child(7) {
+  animation-delay: 0.26s;
+}
+[data-stagger] > *:nth-child(n + 8) {
+  animation-delay: 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The formula sheet and the certificate are meant to be printed. */
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  [data-noprint] {
+    display: none !important;
+  }
+  [data-sheet] {
+    color: #000 !important;
+    background: #fff !important;
+  }
+  [data-sheet] * {
+    color: #000 !important;
+    background: transparent !important;
+    border-color: #bbb !important;
+  }
+  [data-sheet] section {
+    break-inside: avoid;
+  }
+}
