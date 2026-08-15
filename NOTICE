@@ -1,0 +1,36 @@
+Math for a CS Degree
+Copyright 2026 Mujtaba Hashimi · Fannos Academy
+
+This product includes software developed by Mujtaba Hashimi.
+
+--------------------------------------------------------------------------------
+Software
+--------------------------------------------------------------------------------
+
+The application — everything under src/app, src/components, src/lib, scripts/
+and the project configuration — is licensed under the Apache License, Version
+2.0. See LICENSE for the full text.
+
+--------------------------------------------------------------------------------
+Course content
+--------------------------------------------------------------------------------
+
+The course content under src/data (lessons, explanations, analogies, fables,
+fun facts, formulas, quiz questions, drills and drill generators), the
+curriculum sequence, and the design bundle under design/ are the copyrighted
+work of Mujtaba Hashimi. The application presents this content and states in
+its own interface that it is a proprietary course licensed to a single learner.
+
+If you fork this repository to build your own course, replace src/data with
+your own content.
+
+--------------------------------------------------------------------------------
+Third-party
+--------------------------------------------------------------------------------
+
+This project depends on, but does not redistribute the source of, Next.js,
+React, Tailwind CSS and the Anthropic TypeScript SDK. Their licences apply to
+those packages and are available in node_modules after installation.
+
+IBM Plex Sans, IBM Plex Mono and IBM Plex Serif are loaded at build time via
+next/font and are licensed under the SIL Open Font License 1.1.

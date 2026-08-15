@@ -1,4 +1,20 @@
-# Math for a CS Degree
+<h1 align="center">Math for a CS Degree</h1>
+
+<p align="center">
+  <em>Start at arithmetic. Finish at AI.</em>
+</p>
+
+<p align="center">
+  <a href="https://github.com/mujtabahashimi/math-for-cs/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/mujtabahashimi/math-for-cs/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs&logoColor=white">
+  <img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white">
+  <a href="./LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/licence-Apache--2.0-blue"></a>
+  <img alt="87 lessons" src="https://img.shields.io/badge/lessons-87-00c589">
+</p>
+
+<p align="center">
+  <img src="./docs/screenshots/home.png" alt="The course overview: the mental model, the thirteen-track sequence with locked tracks dimmed, and the final examination" width="100%">
+</p>
 
 A gated, thirteen-track mathematics course that runs from arithmetic to the
 mathematics a neural network actually executes — built as a production Next.js
@@ -9,6 +25,15 @@ the next track**, and fail an exam three times and the flagged lessons are
 un-marked for you to redo. You cannot skip ahead to calculus on a shaky
 pre-algebra foundation, which is the failure mode the whole thing exists to
 prevent.
+
+| | |
+| --- | --- |
+| **87** lessons | **13** tracks, in strict order |
+| **340** formulas | on one printable sheet |
+| **174** quiz questions | **87** of them feeding the exams |
+| **435** drills | plus **69** generators, so reps can't be memorised |
+| **15** interactive figures | **3** step-through demos |
+| **109** pages | prerendered at build time |
 
 ## What's inside
 
@@ -28,6 +53,23 @@ prevent.
   back and get it right.
 - **An AI tutor** that re-teaches any lesson in the way you learn, and an AI
   examiner that marks written answers against a rubric.
+
+<p align="center">
+  <img src="./docs/screenshots/lesson.png" alt="A lesson: the CS payoff, the fun fact and the analogy side by side, and the fable" width="100%">
+  <br><em>A lesson opens with why a CS major needs it, then the fact, the analogy and — on the heaviest lessons — a fable that is the mechanism.</em>
+</p>
+
+<p align="center">
+  <img src="./docs/screenshots/graph.png" alt="The growth-rate race: five curves on a single-hue sequential ramp, lightest for log n and darkest for 2^n" width="82%">
+  <br><em>Multi-series figures step down one sequential ramp in magnitude order — ordered data, not a rainbow.</em>
+</p>
+
+<p align="center">
+  <img src="./docs/screenshots/mobile.png" alt="A lesson on a 390px viewport" width="30%">
+  &nbsp;&nbsp;
+  <img src="./docs/screenshots/home-light.png" alt="The overview in the light theme" width="60%">
+  <br><em>Mobile down to 360px, and a real light palette rather than an inverted filter.</em>
+</p>
 
 ## Running it
 
@@ -131,6 +173,32 @@ truly prevent a screen capture — a phone camera always works. What this does i
 make it loud, counted, and visible on the result, which is what real proctoring
 software does too.
 
+## Contributing
+
+Contributions are welcome — corrections to the mathematics most of all, since a
+wrong explanation teaches someone the wrong thing.
+
+- [**CONTRIBUTING.md**](./CONTRIBUTING.md) — project layout, the four checks CI
+  runs, how to add a lesson or a visualisation, and the colour rules.
+- [**CODE_OF_CONDUCT.md**](./CODE_OF_CONDUCT.md) — this is a project about
+  learning things people were told they were bad at, so the tone is part of the
+  work.
+- [**SECURITY.md**](./SECURITY.md) — how to report a vulnerability, and what is
+  deliberately out of scope (the proctoring is a deterrent, not a control).
+
+Before opening a pull request:
+
+```bash
+npm run audit && npm run typecheck && npm run lint && npm run build
+```
+
 ## Licence
 
-Proprietary course content © 2026 Mujtaba Hashimi · Fannos Academy.
+The **application** is licensed under the [Apache License 2.0](./LICENSE).
+
+The **course content** under `src/data` and the design bundle under `design/`
+are © 2026 Mujtaba Hashimi · Fannos Academy, and the app describes itself in its
+own interface as a proprietary course licensed to a single learner. See
+[NOTICE](./NOTICE). If you fork this to build your own course, replace
+`src/data` with your own content.
+

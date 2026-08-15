@@ -1,0 +1,62 @@
+name: Bug report
+description: Something in the application does not work
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you got instead.
+    validations:
+      required: true
+
+  - type: input
+    id: route
+    attributes:
+      label: Where
+      description: The URL path, e.g. /lesson/binary-search or /exam/prealgebra
+      placeholder: /lesson/binary-search
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Lesson page
+        - Drills
+        - Quizzes or match game
+        - Graph or demo
+        - Exam, gating or the three-strike rule
+        - AI tutor or written-answer marking
+        - Formula sheet or certificate
+        - Navigation, sidebar or theme
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Browser, OS and viewport
+      placeholder: Safari 18, iOS 18, iPhone 14
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: Any errors from the browser console. Optional but usually decisive.
+      render: text
+
+  - type: checkboxes
+    id: progress
+    attributes:
+      label: Progress state
+      options:
+        - label: >
+            The problem still happens after resetting progress (the Reset button
+            in the sidebar). If it does not, say so — that points straight at
+            the stored state.

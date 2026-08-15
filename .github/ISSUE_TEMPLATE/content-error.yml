@@ -1,0 +1,52 @@
+name: Content error
+description: A lesson, formula, quiz answer or explanation is wrong
+title: "[content] "
+labels: ["content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mathematical errors matter more here than bugs — a wrong explanation
+        teaches someone the wrong thing. Thank you for catching it.
+
+  - type: input
+    id: lesson
+    attributes:
+      label: Lesson
+      description: The lesson id from the URL, e.g. `logarithms` in /lesson/logarithms
+      placeholder: logarithms
+    validations:
+      required: true
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where in the lesson
+      options:
+        - Core idea or explanation
+        - Formula card
+        - Quiz question or answer
+        - Drill question or answer
+        - Fun fact, analogy or fable
+        - Code block
+        - Graph or demo
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: What it says now
+      description: Quote it exactly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: correct
+    attributes:
+      label: What it should say, and why
+      description: >
+        The reasoning matters as much as the correction — it is what lets a
+        maintainer check it rather than take it on trust.
+    validations:
+      required: true
