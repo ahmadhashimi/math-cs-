@@ -8,6 +8,7 @@ import { DrillPanel } from "@/components/lesson/DrillPanel";
 import { GraphPanel } from "@/components/lesson/GraphPanel";
 import { MatchGame } from "@/components/lesson/MatchGame";
 import { QuizBlock } from "@/components/lesson/QuizBlock";
+import { InequalityDemo } from "@/components/lesson/InequalityDemo";
 import { NumberLineDemo } from "@/components/lesson/NumberLineDemo";
 import { RiemannDemo } from "@/components/lesson/RiemannDemo";
 import { TruthTableDemo } from "@/components/lesson/TruthTableDemo";
@@ -253,6 +254,7 @@ export function LessonView({
       {lesson.demo === "riemann" && <RiemannDemo />}
       {lesson.demo === "truthTable" && <TruthTableDemo />}
       {lesson.demo === "numberLine" && <NumberLineDemo />}
+      {lesson.demo === "inequality" && <InequalityDemo />}
 
       <WriteItOut
         lessonId={lesson.id}
