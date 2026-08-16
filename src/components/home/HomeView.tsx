@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ThreadAccordion } from "@/components/home/ThreadAccordion";
+import { MathAtlas } from "@/components/home/MathAtlas";
 import { TrackSequence, type HomeTrack } from "@/components/home/TrackSequence";
 import {
   CourseFooter,
@@ -13,7 +13,8 @@ import {
   cx,
   type Accent,
 } from "@/components/ui";
-import type { CourseStats, ThreadView } from "@/lib/course";
+import type { CourseStats } from "@/lib/course";
+import type { CourseAtlas } from "@/lib/concept-graph";
 import { useProgress } from "@/lib/progress";
 import { FINAL_EXAM_ID } from "@/lib/types";
 
@@ -35,9 +36,9 @@ const LESSON_PARTS: { tag: string; tone: Accent; title: string; body: string }[]
   [
     {
       tag: "Opens with",
-      tone: "gold",
-      title: "A fun fact",
-      body: "Where the idea came from, or where it quietly runs today. Quicksort was written to sort Russian words by someone who thought it impractical.",
+      tone: "accent",
+      title: "A definition and its place",
+      body: "The plain meaning, the first formal notation, what it builds on, and the later ideas that reuse it.",
     },
     {
       tag: "Then",
@@ -47,21 +48,21 @@ const LESSON_PARTS: { tag: string; tone: Accent; title: string; body: string }[]
     },
     {
       tag: "Then",
+      tone: "gold",
+      title: "History and a bounded analogy",
+      body: "Where the idea came from, one concrete comparison, and an explicit warning about where that comparison stops being true.",
+    },
+    {
+      tag: "Practice",
       tone: "accent",
-      title: "An analogy, then the derivation",
-      body: "A plain-language comparison, then four paragraphs deriving where the formula comes from and naming the mistake people make.",
+      title: "The derivation and why it is true",
+      body: "The formula is rebuilt from the mechanism, then argued step by step instead of being handed down as a rule.",
     },
     {
       tag: "Practice",
       tone: "dim",
-      title: "A match game and a live graph",
-      body: "Pair each formula to its meaning against a move counter. Nine lessons add a graph with sliders you drag to see the maths move.",
-    },
-    {
-      tag: "Practice",
-      tone: "dim",
-      title: "Five timed drills",
-      body: "Type-and-enter reps with a streak counter and the answer revealed on a miss. Roughly 355 across the course.",
+      title: "Live models and five drills",
+      body: "Manipulate the mathematics where a figure helps, then type fresh answers until the procedure becomes fluent.",
     },
     {
       tag: "Proof",
@@ -74,12 +75,12 @@ const LESSON_PARTS: { tag: string; tone: Accent; title: string; body: string }[]
 export function HomeView({
   stats,
   tracks,
-  threads,
+  atlas,
   firstLessonId,
 }: {
   stats: CourseStats;
   tracks: HomeTrack[];
-  threads: ThreadView[];
+  atlas: CourseAtlas;
   firstLessonId: string;
 }) {
   const router = useRouter();
@@ -141,7 +142,7 @@ export function HomeView({
             Read first
           </span>
           <span className="text-[15px] text-ink">
-            A preface, why math, and what a neural network is actually made of
+            Why the old model fails, how ideas connect, and what AI is built from
           </span>
           <span className="font-mono text-[13px] text-ink-faint group-hover:text-accent transition-colors">
             →
@@ -170,20 +171,20 @@ export function HomeView({
         <StatTile value={stats.quizQuestions} label="quiz questions" />
       </div>
 
-      <section className="flex flex-col gap-4 sm:gap-[18px]">
+      <section id="math-atlas" className="flex flex-col gap-4 sm:gap-[18px] scroll-mt-6">
         <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1">
-          <Eyebrow>The mental model</Eyebrow>
+          <Eyebrow>The connected mental model</Eyebrow>
           <span className="font-mono text-xs text-ink-faint">
-            Eight ideas reappear across every track. Click any lesson to jump.
+            Every lesson has a definition, a region and a way forward.
           </span>
         </div>
         <p className="text-[17px] sm:text-lg leading-[1.65] text-ink-muted max-w-[70ch]">
-          A degree taught track by track hides the fact that the same few moves
-          keep returning under new names. Halving is the same idea in an
-          exponent, a logarithm, a binary search and a balanced tree.
-          Recognising a returning move is what turns thirteen subjects into one.
+          A timetable cuts mathematics into subjects. Reality does not. The
+          atlas keeps the connections visible: what an idea means, what it rests
+          on, and what new name it takes when it returns in geometry, algorithms
+          or AI.
         </p>
-        <ThreadAccordion threads={threads} />
+        <MathAtlas atlas={atlas} />
       </section>
 
       <section className="flex flex-col gap-4">

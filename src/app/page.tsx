@@ -4,8 +4,8 @@ import {
   COURSE_STATS,
   FIRST_LESSON_ID,
   TRACKS,
-  threadViews,
 } from "@/lib/course";
+import { courseAtlas } from "@/lib/concept-graph";
 
 export const metadata: Metadata = { title: "Math for a CS Degree" };
 
@@ -24,7 +24,7 @@ export default function Page() {
     <HomeView
       stats={COURSE_STATS}
       tracks={tracks}
-      threads={threadViews()}
+      atlas={courseAtlas()}
       firstLessonId={FIRST_LESSON_ID}
     />
   );

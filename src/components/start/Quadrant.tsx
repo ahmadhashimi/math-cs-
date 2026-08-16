@@ -177,6 +177,9 @@ export function Quadrant() {
       </svg>
 
       <div className="flex flex-col gap-2">
+        <div className="font-mono text-[13px] leading-[1.6] text-accent bg-accent-soft border border-accent-line rounded-md px-3.5 py-2.5">
+          Pythagoras: √(({point.x})² + ({point.y})²) = {length.toFixed(2)}
+        </div>
         <p className="font-mono text-[13px] leading-[1.6] text-ink-muted">
           {quadrant.note} Drag the point, or use the arrows below.
         </p>

@@ -8,10 +8,14 @@
  * Run with `npm run audit`. Exits non-zero on any error, so it works in CI.
  */
 
+import { readFileSync } from "node:fs";
+
 import { TRACKS, THREADS, TOTAL_LESSONS } from "../src/data/course-data.js";
 import { DEPTH } from "../src/data/course-depth.js";
 import { FACTS } from "../src/data/course-facts.js";
 import { GEN, makeDrills } from "../src/data/course-gen.js";
+import { WHY } from "../src/data/course-why.js";
+import { ANALOGY } from "../src/data/course-analogy.js";
 
 const errors = [];
 const warnings = [];
@@ -100,6 +104,26 @@ for (const track of TRACKS) {
 
     if (!FACTS[lesson.id]) warnings.push(`${where}: no fun fact`);
 
+    const why = WHY[lesson.id];
+    if (!why) {
+      errors.push(`${where}: no rigor entry`);
+    } else {
+      if (!why.q || !why.a || !why.m) errors.push(`${where}: incomplete rigor entry`);
+      if (!Array.isArray(why.s) || why.s.length < 2) {
+        errors.push(`${where}: rigor entry needs at least two argument steps`);
+      }
+    }
+
+    const analogy = ANALOGY[lesson.id];
+    if (analogy) {
+      if (!analogy.scene || !analogy.breaks) {
+        errors.push(`${where}: extended analogy needs a scene and a boundary`);
+      }
+      if (!Array.isArray(analogy.map) || analogy.map.length < 2) {
+        errors.push(`${where}: extended analogy needs at least two mappings`);
+      }
+    }
+
     // Generators are the anti-memorisation mechanism; a generator that cannot
     // produce a full set silently falls back, so check it actually runs.
     if (GEN[lesson.id]) {
@@ -131,6 +155,51 @@ for (const thread of THREADS) {
   }
 }
 
+/*
+ * The concept atlas is hand-authored data like everything else here, and it
+ * fails the same way: an edge naming a lesson that was renamed points at
+ * nothing, and the panel silently renders one fewer connection rather than
+ * complaining. Nothing else catches that — the graph is TypeScript, so `tsc`
+ * checks its shape but every id in it is just a string.
+ *
+ * This reads the source as text rather than importing it, because the module
+ * is TypeScript and this script is plain node with no build step. That makes
+ * it a lint on the literals, not a full parse: it will not see an id that is
+ * computed or spread in. Every id in the file today is written out longhand,
+ * and that is the only form this guard promises to police.
+ */
+const graphSource = readFileSync(
+  new URL("../src/lib/concept-graph.ts", import.meta.url),
+  "utf8",
+);
+
+const conceptEdges = [
+  ...graphSource.matchAll(
+    /\{\s*from:\s*["']([^"']+)["']\s*,\s*to:\s*["']([^"']+)["']/g,
+  ),
+];
+
+if (conceptEdges.length === 0) {
+  warnings.push(
+    "concept graph: no edges matched — the literal format changed and this guard is now blind",
+  );
+}
+
+for (const [, from, to] of conceptEdges) {
+  for (const id of [from, to]) {
+    if (!seenLessonIds.has(id)) {
+      errors.push(`concept graph: edge endpoint "${id}" is not a lesson id`);
+    }
+  }
+}
+
+// A self-edge renders as a concept that builds on itself, which is never meant.
+for (const [, from, to] of conceptEdges) {
+  if (from === to) {
+    errors.push(`concept graph: "${from}" has an edge to itself`);
+  }
+}
+
 if (seenLessonIds.size !== TOTAL_LESSONS) {
   errors.push(
     `TOTAL_LESSONS is ${TOTAL_LESSONS} but ${seenLessonIds.size} lessons were found`,
@@ -144,6 +213,9 @@ const summary = [
   `${quizQuestions} quiz questions (${mcQuestions} multiple choice)`,
   `${drills} fixed drills`,
   `${Object.keys(GEN).length} drill generators`,
+  `${Object.keys(WHY).length} rigor arguments`,
+  `${Object.keys(ANALOGY).length} extended analogies`,
+  `${conceptEdges.length} concept edges`,
   `${THREADS.length} mental-model threads`,
 ].join(" · ");
 

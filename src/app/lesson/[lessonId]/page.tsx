@@ -10,6 +10,7 @@ import {
   getAnalogy,
   getLessonContext,
 } from "@/lib/course";
+import { getLessonConceptContext } from "@/lib/concept-graph";
 
 type Params = { params: Promise<{ lessonId: string }> };
 
@@ -32,6 +33,8 @@ export default async function LessonPage({ params }: Params) {
   if (!context) notFound();
 
   const { lesson, track, index, prev, next } = context;
+  const conceptContext = getLessonConceptContext(lessonId);
+  if (!conceptContext) notFound();
 
   return (
     <LessonView
@@ -43,6 +46,7 @@ export default async function LessonPage({ params }: Params) {
       depth={getDepth(lesson.id)}
       why={getWhy(lessonId)}
       analogy={getAnalogy(lessonId)}
+      conceptContext={conceptContext}
       fact={getFact(lesson.id)}
     />
   );

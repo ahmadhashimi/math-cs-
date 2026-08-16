@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ConceptPathRail } from "@/components/home/MathAtlas";
 import { LadderExplorer, type Rung } from "@/components/start/LadderExplorer";
 import { Quadrant } from "@/components/start/Quadrant";
 import { CourseFooter, Eyebrow, PhaseRule } from "@/components/ui";
 import { COURSE_STATS, FIRST_LESSON_ID } from "@/lib/course";
+import { courseAtlas } from "@/lib/concept-graph";
 
 export const metadata: Metadata = {
   title: "Before you start · Math for a CS Degree",
@@ -189,47 +191,26 @@ const CURIOSITIES: { claim: string; body: string }[] = [
   },
 ];
 
+const SYSTEM_FAILURES = [
+  {
+    title: "The finished-formula loop",
+    body: "A rule is learned to pass a test, then taught to the next class as a rule for passing the same test. Nobody in the loop has to recover the reason that made the rule necessary.",
+  },
+  {
+    title: "Assessment chose what was cheap",
+    body: "A derivation reveals a learner's model but takes judgment to assess. Plugging numbers into a memorised template is cheap to grade at scale, so the institution optimised for the proxy.",
+  },
+  {
+    title: "Humans became bad calculators",
+    body: "Pattern-match the question, recall the trick, repeat. Twist the problem or put it inside a real system and the procedure collapses because no mechanism was ever built underneath it.",
+  },
+] as const;
+
 export default function Page() {
+  const pythagoras = courseAtlas().paths.find((path) => path.id === "pythagoras");
+
   return (
     <div className="mx-auto w-full max-w-[860px] px-5 sm:px-8 lg:px-14 pt-10 sm:pt-14 lg:pt-16 pb-24 lg:pb-30 flex flex-col gap-12 sm:gap-14 animate-rise">
-      <section className="flex flex-col gap-5 px-5 py-7 sm:px-8 sm:py-9 bg-gold-surface border border-gold-line border-l-[3px] border-l-gold rounded-lg">
-        <div className="flex flex-col gap-2">
-          <Eyebrow tone="gold" className="tracking-[0.18em]">
-            Preface
-          </Eyebrow>
-          <h2 className="text-[clamp(1.5rem,4vw,2rem)] leading-[1.15] font-semibold tracking-[-0.03em] max-w-[24ch]">
-            A formula given with no reason behind it is not{" "}
-            <em className="font-serif italic font-medium text-gold">
-              knowledge
-            </em>
-            .
-          </h2>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {PREFACE.map((paragraph) => (
-            <p
-              key={paragraph}
-              className="text-[16.5px] sm:text-[17.5px] leading-[1.72] text-gold-ink max-w-[66ch]"
-            >
-              {paragraph}
-            </p>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-1 pt-2 border-t border-gold-line">
-          <span className="font-serif italic text-[19px] text-ink pt-3">
-            Mujtaba Hashimi
-          </span>
-          <span className="text-[13.5px] text-gold-ink">
-            Self-taught STEM and AI engineer · Founder
-          </span>
-          <span className="font-mono text-[12.5px] text-gold-dim">
-            Seattle, Washington · 15 August 2026
-          </span>
-        </div>
-      </section>
-
       <header className="flex flex-col gap-4">
         <Eyebrow tone="accent" className="tracking-[0.18em]">
           Before the first lesson
@@ -250,6 +231,38 @@ export default function Page() {
           Nothing here is examined. Read it once, then start.
         </p>
       </header>
+
+      <section className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
+          <Eyebrow tone="gold">The broken link</Eyebrow>
+          <h2 className="text-[clamp(1.7rem,4.5vw,2.5rem)] leading-[1.12] font-semibold tracking-[-0.03em] max-w-[22ch]">
+            The system taught the output, not the engine.
+          </h2>
+          <p className="text-[17px] leading-[1.7] text-ink-muted max-w-[68ch]">
+            Education at scale rewarded compliance because compliance is easy to
+            count. The cost was comprehension: formulas arrived finished, subjects
+            were sealed into separate rooms, and a correct answer could hide an
+            empty mental model.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-3">
+          {SYSTEM_FAILURES.map((failure, index) => (
+            <div key={failure.title} className="flex flex-col gap-3 p-5 bg-surface border border-line rounded-lg">
+              <span className="font-mono text-[10px] text-gold">0{index + 1}</span>
+              <h3 className="text-[16px] font-semibold leading-snug">{failure.title}</h3>
+              <p className="text-[14.5px] leading-[1.6] text-ink-muted">{failure.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-[17px] leading-[1.7] text-gold-ink bg-gold-surface border border-gold-line border-l-2 border-l-gold rounded-lg px-5 py-4 max-w-[70ch]">
+          AI ends the bargain. A machine will always be faster at recalling the
+          template. The human advantage is architecture and derivation: seeing the
+          constraints, rebuilding the logic, and knowing when a confident answer
+          cannot be true.
+        </p>
+      </section>
 
       <section className="flex flex-col gap-5">
         <PhaseRule
@@ -291,10 +304,28 @@ export default function Page() {
 
         <Quadrant />
 
+        {pythagoras && (
+          <div className="flex flex-col gap-4 p-5 sm:p-6 bg-surface-3 border border-line border-l-2 border-l-gold rounded-lg">
+            <div className="flex flex-col gap-1.5">
+              <Eyebrow tone="gold">One theorem, seven lives</Eyebrow>
+              <h3 className="text-xl sm:text-[23px] font-semibold tracking-[-0.02em]">
+                {pythagoras.name}
+              </h3>
+              <p className="text-[15.5px] leading-[1.65] text-ink-muted">
+                {pythagoras.thesis} This is what a connected mental model looks
+                like: not seven facts to memorise, but one mechanism surviving a
+                change of language.
+              </p>
+            </div>
+            <ConceptPathRail concepts={pythagoras.concepts} />
+          </div>
+        )}
+
         <p className="text-[16.5px] leading-[1.7] text-ink-muted max-w-[68ch]">
-          That is a vector. You have just done the first of the five things a
-          neural network does, and the only difference at the far end of this
-          course is that the list is longer than two.
+          That point can be read as a position vector: the same two numbers, now
+          interpreted as a direction and length from the origin. You have just
+          done the first of the five things a neural network does, and the only
+          difference at the far end of this course is that the list is longer.
         </p>
 
         <div className="flex flex-col gap-3 mt-2">
@@ -319,6 +350,35 @@ export default function Page() {
           loss function is saying. The interesting ceiling is almost always a
           boring floor.
         </p>
+      </section>
+
+      <section className="flex flex-col gap-5 px-5 py-7 sm:px-8 sm:py-9 bg-gold-surface border border-gold-line border-l-[3px] border-l-gold rounded-lg">
+        <div className="flex flex-col gap-2">
+          <Eyebrow tone="gold" className="tracking-[0.18em]">
+            Why this course exists
+          </Eyebrow>
+          <h2 className="text-[clamp(1.5rem,4vw,2rem)] leading-[1.15] font-semibold tracking-[-0.03em] max-w-[24ch]">
+            A formula given with no reason behind it is not{" "}
+            <em className="font-serif italic font-medium text-gold">knowledge</em>.
+          </h2>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {PREFACE.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="text-[16.5px] sm:text-[17.5px] leading-[1.72] text-gold-ink max-w-[66ch]"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-1 pt-2 border-t border-gold-line">
+          <span className="font-serif italic text-[19px] text-ink pt-3">Mujtaba Hashimi</span>
+          <span className="text-[13.5px] text-gold-ink">Self-taught STEM and AI engineer · Founder</span>
+          <span className="font-mono text-[12.5px] text-gold-dim">Seattle, Washington · 15 August 2026</span>
+        </div>
       </section>
 
       <section className="flex flex-col gap-5">

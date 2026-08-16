@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { AskAIButton, TUTOR_ANCHOR } from "@/components/lesson/AskAIButton";
 import { BinarySearchDemo } from "@/components/lesson/BinarySearchDemo";
+import { ConceptContextPanel } from "@/components/lesson/ConceptContextPanel";
 import { DrillPanel } from "@/components/lesson/DrillPanel";
 import { GraphPanel } from "@/components/lesson/GraphPanel";
 import { MatchGame } from "@/components/lesson/MatchGame";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui";
 import { GEN } from "@/data/course-gen";
 import { LESSON_TRACK, TRACK_OUTLINES } from "@/lib/course";
+import type { LessonConceptContext } from "@/lib/concept-graph";
 import { useProgress } from "@/lib/progress";
 import type { Analogy, Depth, Lesson, Why } from "@/lib/types";
 
@@ -42,6 +44,7 @@ export function LessonView({
   fact,
   why,
   analogy,
+  conceptContext,
 }: {
   lesson: Lesson;
   track: { id: string; n: string };
@@ -53,6 +56,7 @@ export function LessonView({
   fact: string;
   why: Why | null;
   analogy: Analogy | null;
+  conceptContext: LessonConceptContext;
 }) {
   const router = useRouter();
   const { done, toggleDone, markSeen, unlocked, hydrated, showShield } =
@@ -133,10 +137,6 @@ export function LessonView({
           {lesson.title}
         </h1>
 
-        <p className="mt-1.5 text-[clamp(1.25rem,3.4vw,1.625rem)] leading-[1.4] tracking-[-0.02em] text-ink-muted max-w-[44ch]">
-          {lesson.idea}
-        </p>
-
         <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-1.5 font-mono text-xs text-ink-faint">
           <span>{minutes} min read</span>
           <span>{lesson.f.length} formulas</span>
@@ -144,6 +144,8 @@ export function LessonView({
           <span>{lesson.q.length} quiz questions</span>
         </div>
       </header>
+
+      <ConceptContextPanel context={conceptContext} />
 
       <PhaseRule step="01" label="Understand" note="Read this once, slowly." />
 
