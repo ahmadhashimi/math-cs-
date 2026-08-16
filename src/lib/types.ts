@@ -112,7 +112,13 @@ export type LessonContext = {
   next: { id: string; title: string } | null;
 };
 
+/**
+ * A question with its answer key. This shape must never reach the browser —
+ * see `ExamPrompt` for the half that does.
+ */
 export type ExamQuestion = {
+  /** Stable across builds: `lessonId#indexWithinLesson`. */
+  id: string;
   q: string;
   o: string[];
   a: number;
@@ -120,6 +126,32 @@ export type ExamQuestion = {
   /** Human-readable source, e.g. "Pre-algebra · Signed numbers". */
   from: string;
   lessonId: string;
+};
+
+/**
+ * What the exam page is allowed to ship: the question and its options, with no
+ * `a` and no `e`. The explanation is withheld too, because an explanation that
+ * says "subtract 2x from both sides to get x = 5" is the answer key in prose.
+ */
+export type ExamPrompt = Omit<ExamQuestion, "a" | "e">;
+
+/** One graded question, returned by the server after an attempt is submitted. */
+export type ExamResult = {
+  id: string;
+  /** Index of the correct option — released only once the attempt is scored. */
+  a: number;
+  e: string;
+  correct: boolean;
+};
+
+/** The server's verdict on a submitted attempt. */
+export type ExamVerdict = {
+  total: number;
+  right: number;
+  pct: number;
+  pass: boolean;
+  results: ExamResult[];
+  missed: { id: string; title: string }[];
 };
 
 export const PASS_MARK = 70;

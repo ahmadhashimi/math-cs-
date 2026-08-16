@@ -94,9 +94,13 @@ export const COURSE_STATS: CourseStats = (() => {
 export function trackExamPool(track: Track): ExamQuestion[] {
   const pool: ExamQuestion[] = [];
   for (const lesson of track.lessons) {
+    // Counted over the lesson's own questions so an id stays put when an
+    // unrelated lesson gains or loses one.
+    let n = 0;
     for (const item of lesson.q ?? []) {
       if (item.t !== "mc") continue;
       pool.push({
+        id: `${lesson.id}#${n++}`,
         q: item.q,
         o: item.o,
         a: item.a,
@@ -118,7 +122,8 @@ export function finalExamPools(): ExamQuestion[][] {
     track.lessons.flatMap((lesson) =>
       (lesson.q ?? [])
         .filter((item) => item.t === "mc")
-        .map((item) => ({
+        .map((item, i) => ({
+          id: `${lesson.id}#${i}`,
           q: item.q,
           o: (item as { o: string[] }).o,
           a: (item as { a: number }).a,
