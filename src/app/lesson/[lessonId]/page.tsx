@@ -7,6 +7,7 @@ import {
   getDepth,
   getFact,
   getWhy,
+  getAnalogy,
   getLessonContext,
 } from "@/lib/course";
 
@@ -41,6 +42,7 @@ export default async function LessonPage({ params }: Params) {
       next={next}
       depth={getDepth(lesson.id)}
       why={getWhy(lessonId)}
+      analogy={getAnalogy(lessonId)}
       fact={getFact(lesson.id)}
     />
   );

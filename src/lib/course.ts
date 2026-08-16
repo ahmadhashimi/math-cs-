@@ -1,8 +1,10 @@
 import { TRACKS, THREADS, TOTAL_LESSONS } from "@/data/course-data";
 import { DEPTH } from "@/data/course-depth";
 import { FACTS } from "@/data/course-facts";
+import { ANALOGY } from "@/data/course-analogy";
 import { WHY } from "@/data/course-why";
 import type {
+  Analogy,
   Depth,
   ExamQuestion,
   Lesson,
@@ -42,6 +44,11 @@ export function getTrack(trackId: string): Track | null {
 
 export function getDepth(lessonId: string): Depth {
   return DEPTH[lessonId] ?? { an: "", ex: [], d: [] };
+}
+
+/** The extended analogy for a lesson, or null while it is unwritten. */
+export function getAnalogy(lessonId: string): Analogy | null {
+  return ANALOGY[lessonId] ?? null;
 }
 
 /** The rigor layer for a lesson, or null while it is still unwritten. */

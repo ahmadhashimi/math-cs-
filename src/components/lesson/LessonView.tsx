@@ -25,7 +25,7 @@ import {
 import { GEN } from "@/data/course-gen";
 import { LESSON_TRACK, TRACK_OUTLINES } from "@/lib/course";
 import { useProgress } from "@/lib/progress";
-import type { Depth, Lesson, Why } from "@/lib/types";
+import type { Analogy, Depth, Lesson, Why } from "@/lib/types";
 
 /** Reps a generated set produces — mirrors DrillPanel, for the meta line only. */
 const GENERATED_REPS = 5;
@@ -41,6 +41,7 @@ export function LessonView({
   depth,
   fact,
   why,
+  analogy,
 }: {
   lesson: Lesson;
   track: { id: string; n: string };
@@ -51,6 +52,7 @@ export function LessonView({
   depth: Depth;
   fact: string;
   why: Why | null;
+  analogy: Analogy | null;
 }) {
   const router = useRouter();
   const { done, toggleDone, markSeen, unlocked, hydrated, showShield } =
@@ -179,6 +181,44 @@ export function LessonView({
           <p className="font-serif italic text-[17px] sm:text-[19px] leading-[1.85] text-ink-muted">
             {depth.fb}
           </p>
+        </section>
+      )}
+
+      {analogy && (
+        <section className="flex flex-col gap-4 px-5 py-6 sm:px-7 bg-surface-3 border border-line border-l-2 border-l-accent rounded-lg">
+          <div className="flex flex-col gap-2">
+            <Eyebrow tone="accent">The whole topic, by analogy</Eyebrow>
+            <p className="text-[16.5px] sm:text-[17.5px] leading-[1.7] text-ink-muted max-w-[68ch]">
+              {analogy.scene}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            {analogy.map.map(([from, to]) => (
+              <div
+                key={from}
+                className="grid sm:grid-cols-[1fr_auto_1fr] gap-x-4 gap-y-1 items-baseline px-4 py-2.5 bg-surface border border-line rounded-md"
+              >
+                <span className="text-[15px] leading-[1.5] text-ink-muted">
+                  {from}
+                </span>
+                <span aria-hidden className="hidden sm:block font-mono text-xs text-ink-ghost">
+                  →
+                </span>
+                <span className="text-[15px] leading-[1.5] text-accent">
+                  {to}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Bounding the analogy is the point of having one. */}
+          <div className="flex flex-col gap-1.5 border-t border-line pt-4">
+            <Eyebrow tone="gold">Where the analogy breaks</Eyebrow>
+            <p className="text-[15.5px] leading-[1.65] text-gold-ink max-w-[68ch]">
+              {analogy.breaks}
+            </p>
+          </div>
         </section>
       )}
 

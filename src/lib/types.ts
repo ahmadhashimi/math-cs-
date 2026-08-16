@@ -117,6 +117,18 @@ export type Why = {
   m: string;
 };
 
+/**
+ * The extended analogy: one everyday picture carried across a whole topic.
+ * `breaks` is not optional politeness — an analogy nobody has bounded becomes
+ * a misconception later, so every entry has to say where it stops being true.
+ */
+export type Analogy = {
+  scene: string;
+  /** [the everyday thing, the mathematics it stands for] */
+  map: [from: string, to: string][];
+  breaks: string;
+};
+
 /** A lesson plus the track it belongs to and its position in the whole course. */
 export type LessonContext = {
   lesson: Lesson;
