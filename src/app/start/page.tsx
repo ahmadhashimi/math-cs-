@@ -220,6 +220,9 @@ export default function Page() {
           <span className="font-serif italic text-[19px] text-ink pt-3">
             Mujtaba Hashimi
           </span>
+          <span className="text-[13.5px] text-gold-ink">
+            Self-taught STEM and AI engineer · Founder
+          </span>
           <span className="font-mono text-[12.5px] text-gold-dim">
             Seattle, Washington · 15 August 2026
           </span>
