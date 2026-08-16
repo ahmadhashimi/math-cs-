@@ -25,7 +25,7 @@ import {
 import { GEN } from "@/data/course-gen";
 import { LESSON_TRACK, TRACK_OUTLINES } from "@/lib/course";
 import { useProgress } from "@/lib/progress";
-import type { Depth, Lesson } from "@/lib/types";
+import type { Depth, Lesson, Why } from "@/lib/types";
 
 /** Reps a generated set produces — mirrors DrillPanel, for the meta line only. */
 const GENERATED_REPS = 5;
@@ -40,6 +40,7 @@ export function LessonView({
   next,
   depth,
   fact,
+  why,
 }: {
   lesson: Lesson;
   track: { id: string; n: string };
@@ -49,6 +50,7 @@ export function LessonView({
   next: Neighbour;
   depth: Depth;
   fact: string;
+  why: Why | null;
 }) {
   const router = useRouter();
   const { done, toggleDone, markSeen, unlocked, hydrated, showShield } =
@@ -248,6 +250,45 @@ export function LessonView({
       />
 
       <MatchGame formulas={lesson.f} lessonId={lesson.id} />
+
+      {why && (
+        <section className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <Eyebrow tone="accent" className="tracking-[0.2em]">
+              Why it is true
+            </Eyebrow>
+            <span className="flex-1 h-px bg-line-strong" aria-hidden />
+          </div>
+
+          <h2 className="text-[19px] sm:text-[23px] font-semibold tracking-[-0.02em] leading-[1.25] max-w-[52ch]">
+            {why.q}
+          </h2>
+
+          <p className="text-[16.5px] leading-[1.7] text-ink-muted max-w-[70ch]">
+            {why.a}
+          </p>
+
+          <ol className="flex flex-col gap-2.5">
+            {why.s.map((step, i) => (
+              <li
+                key={i}
+                className="grid grid-cols-[28px_1fr] gap-3 items-start px-4 py-3.5 bg-surface border border-line rounded-md"
+              >
+                <span className="font-mono text-[11px] text-accent pt-[3px]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="text-[15.5px] leading-[1.65] text-ink-muted">
+                  {step}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          <p className="text-[15.5px] leading-[1.65] text-gold-ink bg-gold-surface border border-gold-line border-l-2 border-l-gold rounded-md px-4 py-3.5 max-w-[70ch]">
+            {why.m}
+          </p>
+        </section>
+      )}
 
       {lesson.graph && <GraphPanel graphKey={lesson.graph} />}
 

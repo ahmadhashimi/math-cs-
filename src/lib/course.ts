@@ -1,6 +1,7 @@
 import { TRACKS, THREADS, TOTAL_LESSONS } from "@/data/course-data";
 import { DEPTH } from "@/data/course-depth";
 import { FACTS } from "@/data/course-facts";
+import { WHY } from "@/data/course-why";
 import type {
   Depth,
   ExamQuestion,
@@ -8,6 +9,7 @@ import type {
   LessonContext,
   Track,
   Thread,
+  Why,
 } from "@/lib/types";
 import { FINAL_EXAM_ID } from "@/lib/types";
 
@@ -40,6 +42,11 @@ export function getTrack(trackId: string): Track | null {
 
 export function getDepth(lessonId: string): Depth {
   return DEPTH[lessonId] ?? { an: "", ex: [], d: [] };
+}
+
+/** The rigor layer for a lesson, or null while it is still unwritten. */
+export function getWhy(lessonId: string): Why | null {
+  return WHY[lessonId] ?? null;
 }
 
 export function getFact(lessonId: string): string {

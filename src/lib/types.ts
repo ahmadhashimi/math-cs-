@@ -102,6 +102,21 @@ export type Depth = {
   fb?: string;
 };
 
+/**
+ * The rigor layer: the argument for why a lesson's result is actually true.
+ * A procedures course asserts the result; this is the part that earns it.
+ */
+export type Why = {
+  /** The question the argument answers. */
+  q: string;
+  /** The intuition, shaped like the proof that follows. */
+  a: string;
+  /** The argument, one line per step. */
+  s: string[];
+  /** What having the argument buys you. */
+  m: string;
+};
+
 /** A lesson plus the track it belongs to and its position in the whole course. */
 export type LessonContext = {
   lesson: Lesson;
