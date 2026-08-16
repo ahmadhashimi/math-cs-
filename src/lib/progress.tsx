@@ -29,6 +29,13 @@ export type WeakLesson = { id: string; title: string };
 
 export type Shield = { title: string; message: string };
 
+/**
+ * How long the curtain stays up after a capture chord that never blurs the
+ * window. Long enough to cover a crosshair drag and the shutter that follows,
+ * short enough that a mis-key does not strand the learner on a blank page.
+ */
+const CURTAIN_MS = 2500;
+
 type PersistedState = {
   /** Lesson id → completed. */
   done: Record<string, boolean>;
@@ -102,6 +109,8 @@ type ProgressValue = {
   setExamLive: (live: boolean) => void;
   focusLost: number;
   resetFocusLost: () => void;
+  /** Capture chords pressed during the live attempt, shown on the result. */
+  captureAttempts: number;
 };
 
 const ProgressContext = createContext<ProgressValue | null>(null);
@@ -387,6 +396,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const [shield, setShield] = useState<Shield | null>(null);
   const [examLive, setExamLiveState] = useState(false);
   const [focusLost, setFocusLost] = useState(0);
+  const [captureAttempts, setCaptureAttempts] = useState(0);
 
   // Mirror the resolved theme onto the root element. The layout's inline
   // script covers the pre-hydration paint; this covers toggles and cross-tab
@@ -400,7 +410,10 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
   const setExamLive = useCallback((live: boolean) => {
     setExamLiveState(live);
-    if (live) setFocusLost(0);
+    if (live) {
+      setFocusLost(0);
+      setCaptureAttempts(0);
+    }
   }, []);
   const resetFocusLost = useCallback(() => setFocusLost(0), []);
 
@@ -414,22 +427,75 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   }, [examLive]);
 
   useEffect(() => {
-    const onKeyUp = (event: KeyboardEvent) => {
-      const macShot =
-        event.metaKey &&
-        event.shiftKey &&
-        ["3", "4", "5", "s", "S"].includes(event.key);
-      if (event.key === "PrintScreen" || macShot) {
-        setShield({
-          title: "Screenshot detected",
-          message:
-            "Math for a CS Degree is a proprietary course, © Mujtaba Hashimi, licensed to you personally. Screenshots of lessons and exams are watermarked to your session — sharing them is a violation of the licence.",
-        });
+    const root = document.documentElement;
+    let dropTimer: number | null = null;
+
+    /**
+     * Raise or drop the opaque curtain. This writes the attribute directly
+     * instead of going through React state because the browser can paint an
+     * attribute-driven style change immediately, and a capture will not wait
+     * for a render. `sticky` keeps it up until focus comes back; the timed
+     * form covers the chords that never blur the window at all.
+     */
+    const curtain = (up: boolean, sticky = false) => {
+      if (dropTimer !== null) {
+        window.clearTimeout(dropTimer);
+        dropTimer = null;
       }
+      if (!up) {
+        root.removeAttribute("data-curtain");
+        return;
+      }
+      root.setAttribute("data-curtain", "1");
+      if (sticky) return;
+      dropTimer = window.setTimeout(() => {
+        dropTimer = null;
+        // If the window is not focused the capture UI is probably still open,
+        // and the blur handler owns the curtain until focus returns.
+        if (document.hasFocus()) root.removeAttribute("data-curtain");
+      }, CURTAIN_MS);
+    };
+
+    const isCaptureChord = (event: KeyboardEvent) =>
+      event.key === "PrintScreen" ||
+      // macOS: Cmd+Shift+3/4/5, and Cmd+Shift+S in some capture utilities.
+      (event.metaKey &&
+        event.shiftKey &&
+        ["3", "4", "5", "s", "S"].includes(event.key)) ||
+      // Windows: Win+Shift+S (Snipping Tool) arrives as a meta-key chord.
+      (event.shiftKey && event.key === "S" && event.getModifierState?.("Meta"));
+
+    // Curtain on keydown, not keyup: keyup fires after the shutter.
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!isCaptureChord(event)) return;
+      curtain(true);
+    };
+
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (!isCaptureChord(event)) return;
+      if (examLiveRef.current) {
+        setCaptureAttempts((count) => {
+          const next = count + 1;
+          setShield({
+            title: "Screen capture during an exam",
+            message: `The screen was blanked as the capture fired, and the attempt was recorded (${next} so far) on your result. Capturing a live exam paper is a licence violation — and the next track assumes you can do this work without the paper in front of you.`,
+          });
+          return next;
+        });
+        return;
+      }
+      setShield({
+        title: "Screenshot detected",
+        message:
+          "Math for a CS Degree is a proprietary course, © Mujtaba Hashimi, licensed to you personally. Screenshots of lessons and exams are watermarked to your session — sharing them is a violation of the licence.",
+      });
     };
 
     const onBlur = () => {
       if (!examLiveRef.current) return;
+      // Anything that takes focus — another app, a capture overlay, a second
+      // monitor — sees a blank page rather than the paper.
+      curtain(true, true);
       setFocusLost((count) => {
         const next = count + 1;
         setShield({
@@ -440,23 +506,60 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       });
     };
 
-    const onCopy = (event: ClipboardEvent) => {
+    const onFocus = () => curtain(false);
+
+    const onVisibility = () => {
+      if (!examLiveRef.current) return;
+      if (document.visibilityState === "hidden") curtain(true, true);
+    };
+
+    /**
+     * Every route out of the page that carries text with it. Selection and the
+     * context menu go too — a right-click Copy is still a copy, and a drag out
+     * of the window is a copy the clipboard never sees.
+     */
+    const deny = (event: Event) => {
       if (!examLiveRef.current) return;
       event.preventDefault();
       setShield({
-        title: "Copy blocked during exams",
+        title: "Locked during a proctored exam",
         message:
-          "Exam questions cannot be copied out while the attempt is live. Pasting them into an AI tells you the answer today and fails you the exam that matters later.",
+          "Copying, cutting, pasting, selecting and the context menu are all disabled while an attempt is live. Pasting a question into an AI tells you the answer today and fails you the exam that matters later.",
       });
     };
 
+    // `selectstart` and `dragstart` fire constantly, so they are denied
+    // silently — a shield on every stray drag would be unusable.
+    const denyQuietly = (event: Event) => {
+      if (!examLiveRef.current) return;
+      event.preventDefault();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
     window.addEventListener("blur", onBlur);
-    document.addEventListener("copy", onCopy);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+    for (const name of ["copy", "cut", "paste", "contextmenu"]) {
+      document.addEventListener(name, deny);
+    }
+    for (const name of ["selectstart", "dragstart"]) {
+      document.addEventListener(name, denyQuietly);
+    }
     return () => {
+      if (dropTimer !== null) window.clearTimeout(dropTimer);
+      root.removeAttribute("data-curtain");
+      window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
       window.removeEventListener("blur", onBlur);
-      document.removeEventListener("copy", onCopy);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+      for (const name of ["copy", "cut", "paste", "contextmenu"]) {
+        document.removeEventListener(name, deny);
+      }
+      for (const name of ["selectstart", "dragstart"]) {
+        document.removeEventListener(name, denyQuietly);
+      }
     };
   }, []);
 
@@ -503,6 +606,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       setExamLive,
       focusLost,
       resetFocusLost,
+      captureAttempts,
     };
   }, [
     state,
@@ -511,6 +615,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     shield,
     examLive,
     focusLost,
+    captureAttempts,
     showShield,
     dismissShield,
     setExamLive,

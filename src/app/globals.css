@@ -334,8 +334,38 @@
   }
 }
 
+/* -------------------------------------------------------------------------- *
+ * The proctor curtain.
+ *
+ * A browser cannot stop an operating-system screen capture. The only lever
+ * left is what is on the screen at the instant the shutter fires, so this
+ * paints an opaque sheet over everything.
+ *
+ * It is driven by an attribute set synchronously inside the event handler
+ * rather than by React state, and that is the whole point: flipping an
+ * attribute invalidates style immediately, where a state update has to wait
+ * for a render before it can paint. On the capture chords that pause for the
+ * user — the crosshair drag of Cmd+Shift+4, the Snipping Tool overlay — that
+ * difference is a blank frame instead of a readable one. On an instant
+ * full-screen grab it is still a race, and one we can lose.
+ * -------------------------------------------------------------------------- */
+html[data-curtain="1"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  /* Above every overlay in the app, including the shield. */
+  z-index: 2147483647;
+  background: var(--bg);
+  pointer-events: none;
+}
+
 /* The formula sheet and the certificate are meant to be printed. */
 @media print {
+  /* A live exam is not. Printing to PDF is a screen capture with a nicer name. */
+  [data-proctored="1"] {
+    display: none !important;
+  }
+
   html,
   body {
     background: #fff !important;

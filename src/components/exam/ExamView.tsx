@@ -58,6 +58,7 @@ export function ExamView({
     examBlocked,
     setExamLive,
     focusLost,
+    captureAttempts,
     lastLesson,
   } = useProgress();
 
@@ -68,6 +69,9 @@ export function ExamView({
   const [paper, setPaper] = useState<ExamQuestion[]>([]);
   const [picked, setPicked] = useState<Record<number, number>>({});
   const [scored, setScored] = useState(false);
+  // The paper is not rendered at all until the learner accepts the proctoring
+  // terms, and every retake asks again — consent is per attempt, not per visit.
+  const [consented, setConsented] = useState(false);
 
   // The paper is drawn on the client so the server render and the first client
   // render agree; bumping `attempt` is what a retake does. The pools arrive
@@ -81,15 +85,18 @@ export function ExamView({
     setPaper(buildPaper(pools, isFinal));
     setPicked({});
     setScored(false);
+    setConsented(false);
   }, [pools, isFinal, attempt]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // Copy-blocking and tab-switch counting live in the provider; they stay armed
-  // for exactly as long as this attempt is unscored.
+  // The lockdown lives in the provider: the curtain, the clipboard denials and
+  // the counters. It is armed for exactly as long as an accepted attempt is
+  // unscored — never before consent, never after the score.
+  const live = consented && !scored;
   useEffect(() => {
-    setExamLive(!scored);
+    setExamLive(live);
     return () => setExamLive(false);
-  }, [scored, setExamLive]);
+  }, [live, setExamLive]);
 
   // Known before the paper exists, so the header never counts up from zero.
   const plannedCount = useMemo(
@@ -141,6 +148,17 @@ export function ExamView({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // Integrity flags read the same in the live header and on the result.
+  const flags: string[] = [];
+  if (focusLost > 0) {
+    flags.push(`${focusLost} tab ${focusLost === 1 ? "switch" : "switches"}`);
+  }
+  if (captureAttempts > 0) {
+    flags.push(
+      `${captureAttempts} screen ${captureAttempts === 1 ? "capture" : "captures"}`,
+    );
+  }
+
   const verdict = pass ? (isFinal ? "Graduated" : "Pass") : "Not yet";
   const summary =
     isFinal && pass
@@ -164,12 +182,14 @@ export function ExamView({
           <span
             className={cx(
               "font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em]",
-              focusLost === 0 ? "text-accent" : "text-danger",
+              flags.length === 0 ? "text-accent" : "text-danger",
             )}
           >
-            {focusLost === 0
-              ? "● proctored session"
-              : `● ${focusLost} tab ${focusLost === 1 ? "switch" : "switches"} recorded`}
+            {flags.length === 0
+              ? consented
+                ? "● proctored session"
+                : "● proctoring armed"
+              : `● ${flags.join(" · ")} recorded`}
           </span>
           <Eyebrow>
             {plannedCount} questions · pass at {passMark}%
@@ -236,7 +256,19 @@ export function ExamView({
         </div>
       )}
 
-      {paper.map((question, index) => {
+      {!consented && !scored && (
+        <ProctorGate
+          questionCount={plannedCount}
+          passMark={passMark}
+          onAccept={() => setConsented(true)}
+          onLeave={() => router.push(`/lesson/${lastLesson ?? backLessonId}`)}
+        />
+      )}
+
+      {/* `contents` keeps the flex layout while giving print one element to
+          hide — a live paper must not survive a Cmd+P. */}
+      <div data-proctored={live ? "1" : undefined} className="contents">
+      {(consented || scored) && paper.map((question, index) => {
         const choice = picked[index];
         const correct = choice === question.a;
         return (
@@ -303,7 +335,9 @@ export function ExamView({
           </div>
         );
       })}
+      </div>
 
+      {(consented || scored) && (
       <div className="flex flex-wrap gap-3 items-center border-t border-line pt-6">
         <PrimaryButton
           onClick={submit}
@@ -328,6 +362,94 @@ export function ExamView({
             : `${answered} of ${total} answered`}
         </span>
       </div>
+      )}
     </div>
+  );
+}
+
+/** What the lockdown does, stated before it is switched on. */
+const PROCTOR_TERMS: string[] = [
+  "Copy, cut, paste, text selection and the right-click menu are switched off for the whole attempt.",
+  "Leaving this tab — to another window, another app, or a second screen — blanks the paper and is counted on your result.",
+  "Pressing a screen-capture shortcut blanks the paper as it fires and is counted on your result.",
+  "The paper will not print. A print is a capture with a nicer name.",
+];
+
+/**
+ * The exam does not begin until this is accepted, and the paper is not in the
+ * DOM to be read until it is. Consent is asked again on every retake, because
+ * an attempt that starts by scrolling past the terms is not proctored, it is
+ * decorated.
+ */
+function ProctorGate({
+  questionCount,
+  passMark,
+  onAccept,
+  onLeave,
+}: {
+  questionCount: number;
+  passMark: number;
+  onAccept: () => void;
+  onLeave: () => void;
+}) {
+  const [ticked, setTicked] = useState(false);
+
+  return (
+    <section className="flex flex-col gap-5 px-6 py-7 sm:px-7 bg-gold-surface border border-gold-line border-l-[3px] border-l-gold rounded-lg animate-rise">
+      <div className="flex flex-col gap-1.5">
+        <Eyebrow tone="gold">Proctored session · read before you begin</Eyebrow>
+        <h2 className="text-[22px] sm:text-[26px] font-semibold tracking-[-0.02em]">
+          This attempt is locked down.
+        </h2>
+        <p className="text-[15.5px] leading-[1.6] text-gold-ink max-w-[68ch]">
+          {questionCount} questions, {passMark}% to pass. The paper stays hidden
+          until you accept, and the lockdown stays on until you submit.
+        </p>
+      </div>
+
+      <ul className="flex flex-col gap-2.5">
+        {PROCTOR_TERMS.map((term) => (
+          <li
+            key={term}
+            className="flex gap-3 text-[15px] leading-[1.55] text-ink bg-gold-inset border border-gold-line rounded-md px-3.5 py-3"
+          >
+            <span className="font-mono text-[11px] text-gold-dim shrink-0 pt-1">
+              LOCKED
+            </span>
+            <span className="min-w-0">{term}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* Stated plainly rather than overclaimed: a page that promises more
+          protection than a browser can deliver teaches the wrong lesson about
+          what security is. */}
+      <p className="text-[14px] leading-[1.6] text-ink-muted max-w-[68ch]">
+        Honest limit: a web page cannot truly stop a screen capture — a phone
+        pointed at the monitor always works. What this does is blank the paper
+        at the moment of capture and record every attempt on your result, which
+        is what proctoring software does too. The rest is on you.
+      </p>
+
+      <label className="flex items-start gap-3 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={ticked}
+          onChange={(event) => setTicked(event.target.checked)}
+          className="mt-1 size-4 shrink-0 accent-gold cursor-pointer"
+        />
+        <span className="text-[15px] leading-[1.55] text-ink">
+          I will sit this attempt without notes, another tab, or help of any
+          kind, and I accept that violations are recorded.
+        </span>
+      </label>
+
+      <div className="flex flex-wrap gap-3 items-center">
+        <GoldButton disabled={!ticked} onClick={onAccept}>
+          {ticked ? "Begin the proctored exam" : "Accept the terms to begin"}
+        </GoldButton>
+        <GhostButton onClick={onLeave}>Not now — back to lessons</GhostButton>
+      </div>
+    </section>
   );
 }
