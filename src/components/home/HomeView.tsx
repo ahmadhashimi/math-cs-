@@ -131,6 +131,23 @@ export function HomeView({
           </span>
         </div>
 
+        {/* The orientation is not examined, so it has to earn its click here or
+            it will never be read. It sits above the rule, before any track. */}
+        <Link
+          href="/start"
+          className="group flex flex-wrap items-baseline gap-x-3 gap-y-1 self-start px-4 py-3 bg-surface border border-line rounded-lg hover:border-accent-line transition-colors"
+        >
+          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-accent">
+            Read first
+          </span>
+          <span className="text-[15px] text-ink">
+            Why math, where it came from, and what a neural network is made of
+          </span>
+          <span className="font-mono text-[13px] text-ink-faint group-hover:text-accent transition-colors">
+            →
+          </span>
+        </Link>
+
         <div className="flex flex-wrap items-center gap-2.5 font-mono text-[13px] text-ink-faint">
           <span className="text-ink-muted">The rule:</span>
           <span>learn</span>
