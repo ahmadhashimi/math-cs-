@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LadderExplorer, type Rung } from "@/components/start/LadderExplorer";
+import { Quadrant } from "@/components/start/Quadrant";
 import { CourseFooter, Eyebrow, PhaseRule } from "@/components/ui";
 import { COURSE_STATS, FIRST_LESSON_ID } from "@/lib/course";
 
@@ -16,41 +18,60 @@ export const metadata: Metadata = {
  * `rests` reads downward — the move on the left is built out of what is on the
  * right, ending at something taught in pre-algebra.
  */
-const LADDER: { move: string; plain: string; rests: string }[] = [
+const LADDER: Rung[] = [
   {
+    tab: "Become numbers",
     move: "Turn the input into numbers",
     plain:
-      "A picture, a word, a user — none of them are mathematics until they are a list of numbers. That list is a vector.",
+      "A picture, a word, a user — none of them are mathematics until they are a list of numbers. That list is a vector. Drag the arrow: two numbers are a point, and a point is a thing you can do arithmetic to.",
     rests:
       "vectors ← the coordinate plane ← signed numbers, because half the coordinates are negative",
+    graph: "vector",
+    figureNote:
+      "Two components here. A word in a language model has a few thousand, which changes nothing about the mathematics and everything about what it can express.",
   },
   {
+    tab: "Multiply",
     move: "Multiply by a grid of numbers",
     plain:
-      "A layer of a network is one matrix multiply. Every output is a row of weights times the input, added up — that sum is a dot product.",
+      "A layer of a network is one matrix multiply. Every output is a row of weights times the input, added up — and that sum, multiply-then-add across two lists, is a dot product.",
     rests:
       "matrices ← dot products ← multiplication, addition and the order you do them in",
+    figureNote:
+      "Take [2, 3] and weights [10, 1]: 2×10 + 3×1 = 23. One output number. A layer does that once per row of the weight grid, and a GPU does it a few trillion times a second. Nothing harder than times and plus is happening.",
   },
   {
+    tab: "Bend it",
     move: "Bend it",
     plain:
-      "Stack matrix multiplies with nothing between them and the whole stack collapses into a single one. The bend is what makes depth mean anything. The usual bend is: keep it if positive, otherwise zero.",
+      "Stack matrix multiplies with nothing between them and the whole stack collapses into a single one — depth would buy you nothing. The bend is what makes layers mean anything. The usual bend is the plainest rule imaginable: keep it if positive, otherwise zero.",
     rests:
       "activation functions ← piecewise functions ← inequalities, which is what 'otherwise zero' is",
+    graph: "relu",
+    figureNote:
+      "Drag the slope. At zero it is the standard ReLU — a straight line with one kink in it. That kink is the entire non-linearity, and it is the reason deep networks can represent anything curved.",
   },
   {
+    tab: "Score it",
     move: "Measure how wrong it is",
     plain:
-      "One number for the whole answer: the loss. For a classifier it is cross-entropy, which is built out of logarithms of the probabilities the model assigned.",
+      "One number for the whole answer: the loss. For a classifier it is cross-entropy, built out of logarithms of the probabilities the model assigned. Confident and right costs almost nothing; confident and wrong costs enormously.",
     rests:
       "cross-entropy ← logarithms ← exponents ← fractions, since probabilities are fractions",
+    graph: "entropy",
+    figureNote:
+      "Entropy is the same machinery: how surprising an outcome is, in bits. A fair coin is maximally uncertain at p = 0.5, and a coin that always lands heads tells you nothing at all.",
   },
   {
+    tab: "Roll downhill",
     move: "Nudge every number downhill",
     plain:
-      "Ask each weight which direction would make the loss smaller, then take a small step that way. Repeat a few million times. That is training — there is no other secret.",
+      "Ask each weight which direction would make the loss smaller, then take a small step that way. Repeat a few million times. That is training — there is no other secret in it.",
     rests:
       "gradient descent ← derivatives ← limits ← functions ← solving an equation for an unknown",
+    graph: "descent",
+    figureNote:
+      "Drag the learning rate past about 1.0 and watch the steps overshoot and fly apart. Everyone who has trained a model has seen exactly this, and the fix is a fact about slopes, not about code.",
   },
 ];
 
@@ -202,6 +223,25 @@ export default function Page() {
         </p>
 
         <div className="flex flex-col gap-3 mt-2">
+          <Eyebrow tone="accent">Start with the smallest possible version</Eyebrow>
+          <p className="text-[16.5px] leading-[1.65] text-ink-muted max-w-[68ch]">
+            Here is the first idea in the course, and you can move it. A
+            position is a pair of numbers. Which quadrant it lands in is nothing
+            more than the sign of each one — that is all a quadrant has ever
+            been. Drag it into the bottom-left and watch both numbers go
+            negative.
+          </p>
+        </div>
+
+        <Quadrant />
+
+        <p className="text-[16.5px] leading-[1.7] text-ink-muted max-w-[68ch]">
+          That is a vector. You have just done the first of the five things a
+          neural network does, and the only difference at the far end of this
+          course is that the list is longer than two.
+        </p>
+
+        <div className="flex flex-col gap-3 mt-2">
           <Eyebrow tone="accent">
             What a neural network is actually made of
           </Eyebrow>
@@ -213,27 +253,7 @@ export default function Page() {
           </p>
         </div>
 
-        <ol className="flex flex-col gap-3">
-          {LADDER.map((rung, i) => (
-            <li
-              key={rung.move}
-              className="flex flex-col gap-2 p-5 bg-surface border border-line rounded-lg"
-            >
-              <div className="flex items-baseline gap-3">
-                <span className="font-mono text-xs text-ink-faint shrink-0">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="text-[16.5px] font-semibold">{rung.move}</span>
-              </div>
-              <p className="text-[15.5px] leading-[1.6] text-ink-muted">
-                {rung.plain}
-              </p>
-              <p className="font-mono text-[12.5px] leading-[1.55] text-accent border-l-2 border-accent-line pl-3">
-                {rung.rests}
-              </p>
-            </li>
-          ))}
-        </ol>
+        <LadderExplorer rungs={LADDER} />
 
         <p className="text-[17px] leading-[1.7] text-ink-muted max-w-[68ch]">
           Read the right-hand column from the bottom up and you have the syllabus,
@@ -303,7 +323,7 @@ export default function Page() {
           feels wrong the first time — which is the point.
         </p>
 
-        <div className="grid sm:grid-cols-2 gap-3">
+        <div data-stagger="1" className="grid sm:grid-cols-2 gap-3">
           {CURIOSITIES.map((item) => (
             <div
               key={item.claim}
