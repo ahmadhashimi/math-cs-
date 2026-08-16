@@ -141,7 +141,7 @@ export function HomeView({
             Read first
           </span>
           <span className="text-[15px] text-ink">
-            Why math, where it came from, and what a neural network is made of
+            A preface, why math, and what a neural network is actually made of
           </span>
           <span className="font-mono text-[13px] text-ink-faint group-hover:text-accent transition-colors">
             →

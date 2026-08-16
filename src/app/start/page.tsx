@@ -8,8 +8,25 @@ import { COURSE_STATS, FIRST_LESSON_ID } from "@/lib/course";
 export const metadata: Metadata = {
   title: "Before you start · Math for a CS Degree",
   description:
-    "Why the mathematics is there at all, where it came from, and what a neural network is actually made of — read before the first lesson.",
+    "A preface from Mujtaba Hashimi, then why the mathematics is there at all, where it came from, and what a neural network is actually made of — read before the first lesson.",
 };
+
+/**
+ * The preface. First person, and left in the author's own words — this is the
+ * one page in the course that is not teaching anything, and it should not
+ * sound like the rest of it.
+ */
+const PREFACE: string[] = [
+  "I grew up in Afghanistan, and for most of the time I was a student there, I hated mathematics.",
+  "I started coding at eight years old on an old Toshiba laptop, writing plain HTML. I loved it immediately, and I never once connected it to the subject I was failing to care about in class. They did not feel related. One was something I was building; the other was a list of rules I was supposed to repeat back correctly.",
+  "It took me a long time to work out that what I hated was not mathematics. It was the way it had been handed to me. The formula always arrived finished. Here it is — use it. Nobody said where it came from, and it never occurred to me that it had come from anywhere at all, that a person had sat down and derived it because they needed it. A formula given to you with no reason behind it is not knowledge. It is an instruction, and you cannot love something you are only permitted to obey.",
+  "I fell in love with mathematics the day I found out that every one of those formulas was derived, by someone, for a reason — and that I could follow the derivation myself, slowly, and end up at the same place they did. That is the whole difference. Not talent. Nobody told me it was allowed.",
+  "I am writing this in the age of AI, and it has raised the stakes on exactly this point. A model will hand you a finished answer in seconds, with no derivation, delivered with total confidence — the same thing that made me hate the subject as a child, except now it is instant and far more persuasive. These tools are genuinely useful and I use them every day. But they are black boxes, and the person who cannot do the mathematics has no way to tell a correct answer from a confident one.",
+  "That is the real risk facing anyone taking a CS degree right now. Not that the tools are bad. That you can travel a very long way without understanding anything, and never notice how far out you are — until the day the machine is wrong, or subtly wrong, and you cannot argue with it, cannot check it, cannot reason alongside it, because you never built the thing you would need to reason with.",
+  "So please do not cheat. Not because it is against a rule, but because there is nobody on the other end of it to fool. A skipped lesson does not come due at the exam. It comes due years later, in a room where it matters, and it will not announce itself.",
+  "Without foundations you are not going to win in computer science. Foundations matter the most. Everything impressive in this field is standing on something ordinary, and the ordinary part is the part almost everyone skips.",
+  "Start at the beginning. Take your time. It is worth it.",
+];
 
 /**
  * The ladder. This is the concrete answer to "what do I need in order to build
@@ -174,6 +191,41 @@ const CURIOSITIES: { claim: string; body: string }[] = [
 export default function Page() {
   return (
     <div className="mx-auto w-full max-w-[860px] px-5 sm:px-8 lg:px-14 pt-10 sm:pt-14 lg:pt-16 pb-24 lg:pb-30 flex flex-col gap-12 sm:gap-14 animate-rise">
+      <section className="flex flex-col gap-5 px-5 py-7 sm:px-8 sm:py-9 bg-gold-surface border border-gold-line border-l-[3px] border-l-gold rounded-lg">
+        <div className="flex flex-col gap-2">
+          <Eyebrow tone="gold" className="tracking-[0.18em]">
+            Preface
+          </Eyebrow>
+          <h2 className="text-[clamp(1.5rem,4vw,2rem)] leading-[1.15] font-semibold tracking-[-0.03em] max-w-[24ch]">
+            A formula given with no reason behind it is not{" "}
+            <em className="font-serif italic font-medium text-gold">
+              knowledge
+            </em>
+            .
+          </h2>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {PREFACE.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="text-[16.5px] sm:text-[17.5px] leading-[1.72] text-gold-ink max-w-[66ch]"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-1 pt-2 border-t border-gold-line">
+          <span className="font-serif italic text-[19px] text-ink pt-3">
+            Mujtaba Hashimi
+          </span>
+          <span className="font-mono text-[12.5px] text-gold-dim">
+            Seattle, Washington · 15 August 2026
+          </span>
+        </div>
+      </section>
+
       <header className="flex flex-col gap-4">
         <Eyebrow tone="accent" className="tracking-[0.18em]">
           Before the first lesson
