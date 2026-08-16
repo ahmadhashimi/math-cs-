@@ -47,7 +47,9 @@ export type GraphKey =
   | "binomdist"
   | "amort"
   | "vector"
-  | "growth";
+  | "growth"
+  | "powers"
+  | "rate";
 
 /** Keys of the hand-built step-through demos. */
 export type DemoKey = "binarySearch" | "riemann" | "truthTable";

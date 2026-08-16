@@ -441,6 +441,55 @@ export const GRAPHS: Record<GraphKey, GraphDef> = {
     note: (v) =>
       `at n = ${v.N}:  log n ≈ ${Math.round(Math.log2(v.N))} · n = ${v.N} · n log n ≈ ${Math.round(v.N * Math.log2(v.N))} · n² = ${v.N * v.N} · 2ⁿ ≈ ${fmt(Math.pow(2, v.N))}`,
   },
+
+  /*
+   * A power and its root, drawn together against y = x. They are mirror images
+   * across that line and they meet at (1, 1), which is the whole reason a root
+   * is called an inverse rather than merely a different operation — the picture
+   * says it in a way the notation ⁿ√x actively hides.
+   */
+  powers: {
+    x: [0, 4],
+    y: [0, 8],
+    sliders: [{ k: "n", label: "exponent n", min: 2, max: 5, step: 1, def: 2 }],
+    title: (v) => `y = xⁿ and y = ⁿ√x, mirrored across y = x   (n = ${v.n})`,
+    curves: (v) => [
+      { color: GH, label: "y = x (the mirror)", fn: (x) => x },
+      { color: G, label: `x^${v.n}`, fn: (x) => Math.pow(x, v.n) },
+      { color: YL, label: `${v.n}-th root of x`, fn: (x) => Math.pow(x, 1 / v.n) },
+    ],
+    // Every power and every root passes through both of these, whatever n is.
+    dots: () => [
+      { x: 1, y: 1, fill: YL, stroke: YL, r: 5 },
+      { x: 0, y: 0, fill: YL, stroke: YL, r: 4 },
+    ],
+    note: (v) =>
+      `2^${v.n} = ${Math.pow(2, v.n)}, so the ${v.n}-th root of ${Math.pow(2, v.n)} is 2 — the same fact read in the other direction. Both curves cross at (1, 1) because 1 to any power is 1.`,
+  },
+
+  /*
+   * Proportionality. A constant rate is a straight line through the origin, and
+   * the two marked points say the thing the definition does not: double the
+   * input and the output doubles with it.
+   */
+  rate: {
+    x: [0, 10],
+    y: [0, 30],
+    sliders: [
+      { k: "k", label: "rate k (y per unit of x)", min: 0.5, max: 3, step: 0.5, def: 2 },
+    ],
+    title: (v) => `y = ${v.k}x   —   ${v.k} of y for every 1 of x`,
+    curves: (v) => [
+      { color: GH, label: "y = x", fn: (x) => x },
+      { color: G, label: `y = ${v.k}x`, fn: (x) => v.k * x },
+    ],
+    dots: (v) => [
+      { x: 3, y: 3 * v.k, fill: YL, stroke: YL, r: 5 },
+      { x: 6, y: 6 * v.k, fill: YL, stroke: YL, r: 5 },
+    ],
+    note: (v) =>
+      `at x = 3, y = ${(3 * v.k).toFixed(1)};  at x = 6, y = ${(6 * v.k).toFixed(1)}. Twice the x, twice the y — and the line goes through (0, 0), which is what separates a proportion from any other straight line.`,
+  },
 };
 
 /** The slider values a figure opens with. */
