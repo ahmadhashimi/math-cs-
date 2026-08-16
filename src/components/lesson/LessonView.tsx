@@ -8,6 +8,7 @@ import { DrillPanel } from "@/components/lesson/DrillPanel";
 import { GraphPanel } from "@/components/lesson/GraphPanel";
 import { MatchGame } from "@/components/lesson/MatchGame";
 import { QuizBlock } from "@/components/lesson/QuizBlock";
+import { NumberLineDemo } from "@/components/lesson/NumberLineDemo";
 import { RiemannDemo } from "@/components/lesson/RiemannDemo";
 import { TruthTableDemo } from "@/components/lesson/TruthTableDemo";
 import { TutorPanel } from "@/components/lesson/TutorPanel";
@@ -251,6 +252,7 @@ export function LessonView({
       {lesson.demo === "binarySearch" && <BinarySearchDemo />}
       {lesson.demo === "riemann" && <RiemannDemo />}
       {lesson.demo === "truthTable" && <TruthTableDemo />}
+      {lesson.demo === "numberLine" && <NumberLineDemo />}
 
       <WriteItOut
         lessonId={lesson.id}

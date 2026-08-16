@@ -52,7 +52,7 @@ export type GraphKey =
   | "rate";
 
 /** Keys of the hand-built step-through demos. */
-export type DemoKey = "binarySearch" | "riemann" | "truthTable";
+export type DemoKey = "binarySearch" | "riemann" | "truthTable" | "numberLine";
 
 export type Lesson = {
   id: string;

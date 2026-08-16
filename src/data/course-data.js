@@ -1,7 +1,7 @@
 // Math for CS — course content. Data only.
 export const TRACKS = [
 { id:'prealgebra', n:'Pre-algebra', sub:'Number sense and the rules everything else rests on', lessons:[
-  { id:'signed', title:'Signed numbers', cs:'Computers store negative integers in two\u2019s complement, which is why the byte 0xFF can mean 255 or \u22121 depending on how you read it. Every off-by-one with unsigned subtraction traces back to not being fluent with signs.', idea:'A minus sign is a direction, not a different species of number.',
+  { id:'signed', title:'Signed numbers', demo:'numberLine', cs:'Computers store negative integers in two\u2019s complement, which is why the byte 0xFF can mean 255 or \u22121 depending on how you read it. Every off-by-one with unsigned subtraction traces back to not being fluent with signs.', idea:'A minus sign is a direction, not a different species of number.',
     f:[['Subtraction is addition','a \u2212 b = a + (\u2212b)','There is only one operation.'],['Sign product','(\u2212a)(\u2212b) = ab','Two flips return you to the start.'],['Absolute value','|a| = a if a \u2265 0, else \u2212a','Distance from zero, never negative.']],
     q:[{t:'mc',q:'Evaluate \u22127 \u2212 (\u22123).',o:['\u221210','\u22124','4','10'],a:1,e:'Subtracting a negative adds: \u22127 + 3 = \u22124. The two minus signs cancel into a plus, then you move three units right from \u22127.'},
        {t:'in',q:'Evaluate |\u221212| + (\u22125).',a:'7',alt:['+7'],s:['|\u221212| = 12 \u2014 absolute value strips the sign.','12 + (\u22125) = 12 \u2212 5.','= 7'],e:'Take the absolute value first, then add the signed number.'}]},
