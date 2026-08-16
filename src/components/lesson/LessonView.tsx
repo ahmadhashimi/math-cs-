@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
+import { AskAIButton, TUTOR_ANCHOR } from "@/components/lesson/AskAIButton";
 import { BinarySearchDemo } from "@/components/lesson/BinarySearchDemo";
 import { DrillPanel } from "@/components/lesson/DrillPanel";
 import { GraphPanel } from "@/components/lesson/GraphPanel";
@@ -263,14 +264,19 @@ export function LessonView({
         formulas={lesson.f}
       />
 
-      <TutorPanel
-        lessonId={lesson.id}
-        title={lesson.title}
-        idea={lesson.idea}
-        cs={lesson.cs}
-        formulas={lesson.f}
-        analogy={depth.an}
-      />
+      {/* A real box, not `contents`: scrollIntoView needs something with a
+          layout box to scroll to. Scroll margin keeps the heading clear of the
+          sticky mobile bar on arrival. */}
+      <div id={TUTOR_ANCHOR} className="scroll-mt-20">
+        <TutorPanel
+          lessonId={lesson.id}
+          title={lesson.title}
+          idea={lesson.idea}
+          cs={lesson.cs}
+          formulas={lesson.f}
+          analogy={depth.an}
+        />
+      </div>
 
       <DrillPanel
         lessonId={lesson.id}
@@ -322,6 +328,8 @@ export function LessonView({
           ← / → to move between lessons
         </span>
       </section>
+
+      <AskAIButton />
 
       <CourseFooter />
     </div>
