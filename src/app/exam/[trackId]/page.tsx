@@ -4,9 +4,8 @@ import { ExamView } from "@/components/exam/ExamView";
 import {
   FIRST_LESSON_ID,
   TRACKS,
-  finalExamPools,
+  examPrompts,
   getTrack,
-  trackExamPool,
   trackTitle,
 } from "@/lib/course";
 import { FINAL_EXAM_ID } from "@/lib/types";
@@ -31,14 +30,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function ExamPage({ params }: Params) {
   const { trackId } = await params;
 
-  // The final draws from every track, so it ships one pool per track and the
-  // client samples them; a track exam ships a single pool and shuffles it whole.
+  // Both shapes ship PROMPTS — question and options, no answer and no
+  // explanation. The final draws from every track, so it sends one pool per
+  // track and the client samples them; a track exam sends a single pool and
+  // shuffles it whole. Neither carries anything worth reading in the source.
   if (trackId === FINAL_EXAM_ID) {
     return (
       <ExamView
         trackId={FINAL_EXAM_ID}
         title={trackTitle(FINAL_EXAM_ID)}
-        pools={finalExamPools()}
+        pools={examPrompts(FINAL_EXAM_ID)}
         backLessonId={FIRST_LESSON_ID}
       />
     );
@@ -51,7 +52,7 @@ export default async function ExamPage({ params }: Params) {
     <ExamView
       trackId={track.id}
       title={track.n}
-      pools={[trackExamPool(track)]}
+      pools={examPrompts(track.id)}
       backLessonId={track.lessons[0]?.id ?? FIRST_LESSON_ID}
     />
   );

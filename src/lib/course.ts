@@ -6,6 +6,9 @@ import { WHY } from "@/data/course-why";
 import type {
   Analogy,
   Depth,
+  ExamPrompt,
+  ExamResult,
+  ExamVerdict,
   ExamQuestion,
   Lesson,
   LessonContext,
@@ -13,7 +16,7 @@ import type {
   Thread,
   Why,
 } from "@/lib/types";
-import { FINAL_EXAM_ID } from "@/lib/types";
+import { FINAL_EXAM_ID, FINAL_PASS_MARK, PASS_MARK } from "@/lib/types";
 
 export { TRACKS, THREADS, TOTAL_LESSONS };
 
@@ -147,6 +150,109 @@ export function finalExamPools(): ExamQuestion[][] {
         })),
     ),
   );
+}
+
+/* -------------------------------------------------------------------------- *
+ * Exams: the answer key stays on the server.
+ *
+ * The page ships prompts — question and options, nothing else — and the client
+ * never learns which option is right until the attempt has been submitted and
+ * scored here. That is the whole point of this block: while the exam was scored
+ * in the browser, the key travelled with it, and the gate the course is built
+ * on could be read straight out of the page source.
+ * -------------------------------------------------------------------------- */
+
+/** Questions the final draws from each track. */
+export const FINAL_PER_TRACK = 2;
+
+/** The full pool for an exam, grouped as the client expects to sample it. */
+function examPools(trackId: string): ExamQuestion[][] {
+  if (trackId === FINAL_EXAM_ID) return finalExamPools();
+  const track = getTrack(trackId);
+  return track ? [trackExamPool(track)] : [];
+}
+
+/** Strips the answer key. This is the only exam shape a page may send out. */
+export function examPrompts(trackId: string): ExamPrompt[][] {
+  return examPools(trackId).map((pool) =>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructuring is the strip
+    pool.map(({ a, e, ...prompt }) => prompt),
+  );
+}
+
+/** How many questions a submitted attempt must contain to be scoreable. */
+export function expectedCount(trackId: string): number {
+  const pools = examPools(trackId);
+  if (trackId === FINAL_EXAM_ID) {
+    return pools.reduce((n, pool) => n + Math.min(FINAL_PER_TRACK, pool.length), 0);
+  }
+  return pools[0]?.length ?? 0;
+}
+
+export type SubmittedAnswer = { id: string; pick: number };
+
+/**
+ * Scores an attempt. Returns null when the submission does not describe a real
+ * sitting of this exam, which is refused rather than scored: a short paper
+ * would otherwise let someone answer three easy questions and claim 100%.
+ */
+export function scoreAttempt(
+  trackId: string,
+  answers: SubmittedAnswer[],
+): ExamVerdict | null {
+  const pools = examPools(trackId);
+  if (pools.length === 0) return null;
+
+  const key = new Map<string, { question: ExamQuestion; poolIndex: number }>();
+  pools.forEach((pool, poolIndex) => {
+    for (const question of pool) key.set(question.id, { question, poolIndex });
+  });
+
+  const total = expectedCount(trackId);
+  if (answers.length !== total) return null;
+
+  const seen = new Set<string>();
+  const perPool = new Map<number, number>();
+  for (const { id } of answers) {
+    const hit = key.get(id);
+    // Unknown id, or the same question submitted twice to pad the count.
+    if (!hit || seen.has(id)) return null;
+    seen.add(id);
+    perPool.set(hit.poolIndex, (perPool.get(hit.poolIndex) ?? 0) + 1);
+  }
+
+  // The final must be spread across the tracks, not harvested from the easiest.
+  if (trackId === FINAL_EXAM_ID) {
+    for (const count of perPool.values()) {
+      if (count > FINAL_PER_TRACK) return null;
+    }
+  }
+
+  const results: ExamResult[] = [];
+  const missed: { id: string; title: string }[] = [];
+  let right = 0;
+
+  for (const { id, pick } of answers) {
+    const { question } = key.get(id)!;
+    const correct = pick === question.a;
+    if (correct) right += 1;
+    else if (!missed.some((m) => m.id === question.lessonId)) {
+      missed.push({ id: question.lessonId, title: question.from });
+    }
+    results.push({ id, a: question.a, e: question.e, correct });
+  }
+
+  // Integer arithmetic, matching the rule the client used to apply: floor the
+  // displayed percentage so it can never disagree with the verdict.
+  const mark = trackId === FINAL_EXAM_ID ? FINAL_PASS_MARK : PASS_MARK;
+  return {
+    total,
+    right,
+    pct: total ? Math.floor((right * 100) / total) : 0,
+    pass: total > 0 && right * 100 >= mark * total,
+    results,
+    missed,
+  };
 }
 
 /** Printable formula sheet: every formula in the course, grouped by track. */

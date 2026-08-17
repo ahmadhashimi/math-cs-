@@ -10,23 +10,22 @@ import {
   cx,
 } from "@/components/ui";
 import { freshSeed, shuffle } from "@/lib/answers";
-import { useProgress, type WeakLesson } from "@/lib/progress";
+import { FINAL_PER_TRACK } from "@/lib/course";
+import { useProgress } from "@/lib/progress";
 import {
   FINAL_EXAM_ID,
   FINAL_PASS_MARK,
   PASS_MARK,
   STRIKE_LIMIT,
-  type ExamQuestion,
+  type ExamPrompt,
+  type ExamVerdict,
 } from "@/lib/types";
-
-/** Questions the final takes from each track's pool. */
-const FINAL_PER_TRACK = 2;
 
 /**
  * A track exam is its whole pool in a fresh order; the final samples every
  * track, then shuffles so the tracks interleave rather than arriving in blocks.
  */
-function buildPaper(pools: ExamQuestion[][], isFinal: boolean): ExamQuestion[] {
+function buildPaper(pools: ExamPrompt[][], isFinal: boolean): ExamPrompt[] {
   const seed = freshSeed();
   const drawn = isFinal
     ? pools.flatMap((pool, i) =>
@@ -46,8 +45,8 @@ export function ExamView({
 }: {
   trackId: string;
   title: string;
-  /** One pool for a track exam, one pool per track for the final. */
-  pools: ExamQuestion[][];
+  /** Prompts only — the answer key never reaches this component. */
+  pools: ExamPrompt[][];
   backLessonId: string;
 }) {
   const router = useRouter();
@@ -66,9 +65,14 @@ export function ExamView({
   const passMark = isFinal ? FINAL_PASS_MARK : PASS_MARK;
 
   const [attempt, setAttempt] = useState(0);
-  const [paper, setPaper] = useState<ExamQuestion[]>([]);
+  const [paper, setPaper] = useState<ExamPrompt[]>([]);
   const [picked, setPicked] = useState<Record<number, number>>({});
-  const [scored, setScored] = useState(false);
+  // The score arrives from the server or not at all. `scored` is derived from
+  // it rather than tracked separately, so there is no state in which the paper
+  // is marked without a verdict behind it.
+  const [verdict, setVerdict] = useState<ExamVerdict | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   // The paper is not rendered at all until the learner accepts the proctoring
   // terms, and every retake asks again — consent is per attempt, not per visit.
   const [consented, setConsented] = useState(false);
@@ -84,7 +88,8 @@ export function ExamView({
   useEffect(() => {
     setPaper(buildPaper(pools, isFinal));
     setPicked({});
-    setScored(false);
+    setVerdict(null);
+    setSubmitError(null);
     setConsented(false);
   }, [pools, isFinal, attempt]);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -92,6 +97,7 @@ export function ExamView({
   // The lockdown lives in the provider: the curtain, the clipboard denials and
   // the counters. It is armed for exactly as long as an accepted attempt is
   // unscored — never before consent, never after the score.
+  const scored = verdict !== null;
   const live = consented && !scored;
   useEffect(() => {
     setExamLive(live);
@@ -110,42 +116,70 @@ export function ExamView({
 
   const total = paper.length;
   const answered = Object.keys(picked).length;
-  const right = paper.reduce(
-    (n, question, i) => n + (picked[i] === question.a ? 1 : 0),
-    0,
+
+  // Every number on the result page comes from the server's verdict. Nothing
+  // here recomputes a score, because nothing here knows the answers.
+  const right = verdict?.right ?? 0;
+  const pct = verdict?.pct ?? 0;
+  const pass = verdict?.pass ?? false;
+  const marks = useMemo(
+    () => new Map((verdict?.results ?? []).map((r) => [r.id, r])),
+    [verdict],
   );
-  // Integer arithmetic so the pass check is exact: `right / total ≥ mark%`
-  // with no float error and no rounding. Math.round here once let a 69.6%
-  // score round up to 70 and pass below the mark. The displayed percentage is
-  // floored so it always agrees with the verdict (floor(pct) ≥ mark exactly
-  // when pct ≥ mark, since the mark is a whole number).
-  const pct = total ? Math.floor((right * 100) / total) : 0;
-  const pass = total > 0 && right * 100 >= passMark * total;
   const blocked = examBlocked(trackId);
   const attemptNo = attempts[trackId] ?? 0;
 
-  function submit() {
+  async function submit() {
     if (scored) {
       if (blocked) return;
       setAttempt((n) => n + 1);
       return;
     }
-    // `total` is 0 until the paper is drawn on mount; scoring an empty paper
-    // would burn an attempt and record a 0%.
-    if (total === 0 || answered < total) return;
+    // `total` is 0 until the paper is drawn on mount; submitting an empty
+    // paper would burn an attempt and record a 0%.
+    if (total === 0 || answered < total || submitting) return;
 
-    // One entry per lesson: three misses from the same lesson is still one
-    // lesson to redo.
-    const missed: WeakLesson[] = [];
-    for (const [i, question] of paper.entries()) {
-      if (picked[i] === question.a) continue;
-      if (missed.some((m) => m.id === question.lessonId)) continue;
-      missed.push({ id: question.lessonId, title: question.from });
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const response = await fetch("/api/exam", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackId,
+          answers: paper.map((question, i) => ({
+            id: question.id,
+            pick: picked[i],
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        // The attempt is NOT recorded on a failed submit. A network blip must
+        // not cost a strike, and three of those would lock the track.
+        setSubmitError(
+          (body as { error?: string } | null)?.error ??
+            "The exam could not be scored. Nothing was recorded — try submitting again.",
+        );
+        return;
+      }
+
+      const scoredVerdict = (await response.json()) as ExamVerdict;
+      recordExam({
+        trackId,
+        passed: scoredVerdict.pass,
+        missed: scoredVerdict.missed,
+      });
+      setVerdict(scoredVerdict);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setSubmitError(
+        "Could not reach the server, so nothing was scored or recorded. Check your connection and submit again.",
+      );
+    } finally {
+      setSubmitting(false);
     }
-
-    recordExam({ trackId, passed: pass, missed });
-    setScored(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   // Integrity flags read the same in the live header and on the result.
@@ -159,7 +193,7 @@ export function ExamView({
     );
   }
 
-  const verdict = pass ? (isFinal ? "Graduated" : "Pass") : "Not yet";
+  const verdictLabel = pass ? (isFinal ? "Graduated" : "Pass") : "Not yet";
   const summary =
     isFinal && pass
       ? `${right} of ${total} correct across every track in the course. Your certificate is ready.`
@@ -216,7 +250,7 @@ export function ExamView({
               {pct}%
             </span>
             <span className="font-mono text-[15px] uppercase tracking-[0.14em]">
-              {verdict}
+              {verdictLabel}
             </span>
           </div>
           <p className="mt-2.5 text-[17px] leading-[1.6] text-ink-muted">
@@ -270,7 +304,8 @@ export function ExamView({
       <div data-proctored={live ? "1" : undefined} className="contents">
       {(consented || scored) && paper.map((question, index) => {
         const choice = picked[index];
-        const correct = choice === question.a;
+        const mark = marks.get(question.id);
+        const correct = mark?.correct ?? false;
         return (
           <div
             key={`${attempt}-${index}`}
@@ -315,7 +350,7 @@ export function ExamView({
                       ? choice === option
                         ? "bg-surface-2 border-gold text-gold"
                         : "bg-surface-2 border-line text-ink"
-                      : option === question.a
+                      : option === mark?.a
                         ? "bg-accent-soft border-accent text-accent"
                         : option === choice
                           ? "bg-danger-soft border-danger text-danger"
@@ -327,9 +362,9 @@ export function ExamView({
               ))}
             </div>
 
-            {scored && (
+            {scored && mark && (
               <p className="text-[15px] leading-[1.65] text-ink-muted border-l-2 border-line-strong pl-3.5">
-                {question.e}
+                {mark.e}
               </p>
             )}
           </div>
@@ -338,16 +373,30 @@ export function ExamView({
       </div>
 
       {(consented || scored) && (
-      <div className="flex flex-wrap gap-3 items-center border-t border-line pt-6">
+      <div className="flex flex-col gap-3 border-t border-line pt-6">
+      {submitError && (
+        <p
+          role="alert"
+          className="text-[15px] leading-[1.6] text-danger bg-danger-soft border border-danger-line rounded-md px-4 py-3"
+        >
+          {submitError}
+        </p>
+      )}
+
+      <div className="flex flex-wrap gap-3 items-center">
         <PrimaryButton
           onClick={submit}
-          disabled={scored ? blocked : total === 0 || answered < total}
+          disabled={
+            scored ? blocked : total === 0 || answered < total || submitting
+          }
         >
           {scored
             ? blocked
               ? "Locked — redo the flagged lessons first"
               : "Retake with fresh order"
-            : "Submit for a score"}
+            : submitting
+              ? "Scoring…"
+              : "Submit for a score"}
         </PrimaryButton>
 
         <GhostButton
@@ -361,6 +410,7 @@ export function ExamView({
             ? `Scored · ${right}/${total}`
             : `${answered} of ${total} answered`}
         </span>
+      </div>
       </div>
       )}
     </div>
