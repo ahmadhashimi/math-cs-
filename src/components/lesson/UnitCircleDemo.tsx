@@ -212,7 +212,7 @@ export function UnitCircleDemo() {
             key={label}
             onClick={() => setTheta(value)}
             className={cx(
-              "font-mono text-[12.5px] px-3 py-2 rounded-md border cursor-pointer transition-colors",
+              "font-mono text-[12.5px] px-3 py-2 min-h-11 min-w-11 inline-flex items-center justify-center rounded-md border cursor-pointer transition-colors",
               Math.abs(theta - value) < 1e-6
                 ? "bg-accent-soft border-accent text-accent"
                 : "border-line text-ink-muted hover:text-ink hover:border-line-strong",

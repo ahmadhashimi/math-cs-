@@ -48,7 +48,7 @@ export function InequalityDemo() {
       key={r}
       onClick={() => setRel(r)}
       className={cx(
-        "font-mono text-sm rounded-[5px] px-4 py-2 border cursor-pointer transition-colors",
+        "font-mono text-sm rounded-[5px] px-4 py-2 min-h-11 min-w-11 inline-flex items-center justify-center border cursor-pointer transition-colors",
         rel === r
           ? "bg-accent text-accent-ink border-accent"
           : "bg-transparent text-ink-muted border-line-strong hover:text-ink hover:border-ink-faint",

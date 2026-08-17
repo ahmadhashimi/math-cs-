@@ -318,7 +318,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           href="/"
           onClick={onNavigate}
           className={cx(
-            "flex-1 text-center font-mono text-xs rounded-md px-3 py-2.5 border",
+            "flex-1 text-center font-mono text-xs rounded-md px-3 py-2.5 min-h-11 inline-flex items-center justify-center border",
             pathname === "/"
               ? "bg-accent text-accent-ink border-accent"
               : "bg-transparent text-ink-muted border-line hover:text-ink",
@@ -330,7 +330,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           href="/formulas"
           onClick={onNavigate}
           className={cx(
-            "flex-1 text-center font-mono text-xs rounded-md px-3 py-2.5 border",
+            "flex-1 text-center font-mono text-xs rounded-md px-3 py-2.5 min-h-11 inline-flex items-center justify-center border",
             pathname === "/formulas"
               ? "bg-accent text-accent-ink border-accent"
               : "bg-transparent text-ink-muted border-line hover:text-ink",
@@ -342,7 +342,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           onClick={toggleTheme}
           title="Toggle light and dark"
           aria-label="Toggle light and dark"
-          className="font-mono text-[13px] rounded-md px-3 py-2.5 border border-line text-ink-muted hover:text-ink hover:border-line-strong cursor-pointer"
+          className="font-mono text-[13px] rounded-md px-3 py-2.5 min-h-11 min-w-11 inline-flex items-center justify-center border border-line text-ink-muted hover:text-ink hover:border-line-strong cursor-pointer"
         >
           {theme === "light" ? "☀" : "☾"}
         </button>
@@ -356,7 +356,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               resetProgress();
             }
           }}
-          className="font-mono text-xs rounded-md px-3 py-2.5 border border-line text-ink-faint hover:text-ink-muted hover:border-line-strong cursor-pointer"
+          className="font-mono text-xs rounded-md px-3 py-2.5 min-h-11 inline-flex items-center justify-center border border-line text-ink-faint hover:text-ink-muted hover:border-line-strong cursor-pointer"
         >
           Reset
         </button>
