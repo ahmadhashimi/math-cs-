@@ -153,7 +153,7 @@ export function CourseFooter({ className }: { className?: string }) {
         <span className="text-ink-muted">Mujtaba Hashimi</span> · Fannos Academy ·
         US education system
       </span>
-      <span className="font-mono text-xs text-ink-ghost">
+      <span className="font-mono text-xs text-ink-faint">
         © 2026 Mujtaba Hashimi · Proprietary — all rights reserved
       </span>
     </footer>

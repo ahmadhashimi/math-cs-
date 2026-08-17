@@ -235,7 +235,7 @@ export function LessonView({
               key={i}
               className="grid grid-cols-[30px_1fr] gap-3.5 items-start"
             >
-              <div className="font-mono text-xs text-ink-ghost pt-[5px]">
+              <div className="font-mono text-xs text-ink-faint pt-[5px]">
                 {String(i + 1).padStart(2, "0")}
               </div>
               <p className="text-[17px] sm:text-lg leading-[1.75] text-ink-muted">
@@ -409,7 +409,7 @@ export function LessonView({
           {next ? next.title : "End"} →
         </GhostButton>
 
-        <span className="hidden md:inline font-mono text-xs text-ink-ghost ml-1">
+        <span className="hidden md:inline font-mono text-xs text-ink-faint ml-1">
           ← / → to move between lessons
         </span>
       </section>

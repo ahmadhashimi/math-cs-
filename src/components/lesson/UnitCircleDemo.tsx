@@ -92,9 +92,32 @@ export function UnitCircleDemo() {
       <svg
         ref={svgRef}
         viewBox={`0 0 ${SIZE} ${SIZE}`}
-        role="img"
-        aria-label={`Unit circle at angle ${theta.toFixed(2)} radians, cosine ${cos.toFixed(2)}, sine ${sin.toFixed(2)}`}
+        role="slider"
+        aria-label="Angle on the unit circle"
+        aria-valuemin={0}
+        aria-valuemax={360}
+        aria-valuenow={Math.round(degrees)}
+        aria-valuetext={`${Math.round(degrees)} degrees, cosine ${cos.toFixed(2)}, sine ${sin.toFixed(2)}`}
+        tabIndex={0}
         className="w-full h-auto bg-inset border border-line rounded-md touch-none cursor-crosshair"
+        /* Turning the point is a drag, which no keyboard can perform — so the
+           arrows turn it instead. A degree per press, fifteen with shift, so
+           the landmark angles are reachable without hunting. */
+        onKeyDown={(event) => {
+          const dir =
+            event.key === "ArrowRight" || event.key === "ArrowUp"
+              ? 1
+              : event.key === "ArrowLeft" || event.key === "ArrowDown"
+                ? -1
+                : 0;
+          if (dir === 0) return;
+          event.preventDefault();
+          const stepDeg = event.shiftKey ? 15 : 1;
+          setTheta((t) => {
+            const next = t + (dir * stepDeg * Math.PI) / 180;
+            return ((next % TAU) + TAU) % TAU;
+          });
+        }}
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture(event.pointerId);
           setDragging(true);

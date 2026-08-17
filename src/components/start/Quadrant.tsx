@@ -62,7 +62,10 @@ export function Quadrant() {
       <div className="flex flex-wrap justify-between items-end gap-4">
         <div className="flex flex-col gap-[7px] min-w-0">
           <Eyebrow tone="accent">Drag it</Eyebrow>
-          <div className="font-mono text-[16px] sm:text-[19px] font-medium text-ink break-words">
+          <div
+            aria-live="polite"
+            className="font-mono text-[16px] sm:text-[19px] font-medium text-ink break-words"
+          >
             v = [{point.x}, {point.y}]
           </div>
         </div>
@@ -77,7 +80,26 @@ export function Quadrant() {
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         role="img"
         aria-label={`A point at x ${point.x}, y ${point.y}, in ${quadrant.name}`}
+        tabIndex={0}
         className="w-full h-auto bg-inset border border-line rounded-md touch-none cursor-crosshair"
+        /* Dragging is a mouse gesture, so the same control has to be reachable
+           from the keyboard or this figure simply does not exist for anyone
+           navigating without a pointer. Arrows step by one unit. */
+        onKeyDown={(event) => {
+          const step: Record<string, [number, number]> = {
+            ArrowLeft: [-1, 0],
+            ArrowRight: [1, 0],
+            ArrowUp: [0, 1],
+            ArrowDown: [0, -1],
+          };
+          const move = step[event.key];
+          if (!move) return;
+          event.preventDefault();
+          setPoint((p) => ({
+            x: clamp(p.x + move[0]),
+            y: clamp(p.y + move[1]),
+          }));
+        }}
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture(event.pointerId);
           setDragging(true);
