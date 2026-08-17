@@ -1,10 +1,15 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { generateText, notConfigured, provider } from "@/lib/ai";
+import { clientKey, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
 /** Below this an answer is a fragment, not a sentence, and there is nothing to mark. */
 const MIN_ANSWER = 12;
 const MAX_ANSWER = 4000;
+
+/** Marking is slower and rarer than asking, so the window is tighter. */
+const RATE_LIMIT = 10;
+const RATE_WINDOW_MS = 60_000;
 
 type GradeRequest = {
   lessonTitle: string;
@@ -74,15 +79,15 @@ export async function POST(request: Request) {
     answer: body.answer.trim().slice(0, MAX_ANSWER),
   };
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json(
-      {
-        error:
-          "Marking is not configured on this deployment. Set ANTHROPIC_API_KEY to enable it.",
-      },
-      { status: 503 },
-    );
-  }
+  // Checked before the model call, so a flood costs nothing.
+  const limit = rateLimit(
+    `grade:${clientKey(request)}`,
+    RATE_LIMIT,
+    RATE_WINDOW_MS,
+  );
+  if (!limit.ok) return tooManyRequests(limit.retryAfter, "marking");
+
+  if (!provider()) return notConfigured("Marking");
 
   const prompt = `You are marking a written answer in a computer science mathematics course. Be a fair but exacting examiner.
 
@@ -101,18 +106,15 @@ Reply in exactly this format and nothing else:
 SCORE: <0-5>
 FEEDBACK: <under 90 words. Name specifically what was right, then the single most important thing missing or wrong, then one concrete sentence they should have written.>`;
 
-  const client = new Anthropic();
-
-  let message;
+  let text: string;
   try {
-    message = await client.messages.create({
-      model: "claude-opus-5",
-      // Thinking is on by default and shares this budget with the reply, so the
-      // cap carries headroom for both: a truncated reply loses the FEEDBACK
-      // line entirely, which reads as an unmarked answer.
-      max_tokens: 1024,
-      output_config: { effort: "low" },
-      messages: [{ role: "user", content: prompt }],
+    // A truncated reply loses the FEEDBACK line entirely, which reads as an
+    // unmarked answer — so the cap carries headroom for a model that thinks
+    // before it writes.
+    text = await generateText({
+      system: "You are a fair but exacting examiner.",
+      user: prompt,
+      maxTokens: 1024,
     });
   } catch {
     return Response.json(
@@ -120,17 +122,6 @@ FEEDBACK: <under 90 words. Name specifically what was right, then the single mos
       { status: 502 },
     );
   }
-
-  /*
-   * A refusal returns a normal 200 with no usable content, so the stop reason is
-   * checked before the blocks are read rather than after.
-   */
-  const text =
-    message.stop_reason === "refusal"
-      ? ""
-      : message.content
-          .map((block) => (block.type === "text" ? block.text : ""))
-          .join("");
 
   const scored = /SCORE:\s*(\d)/.exec(text);
   const parsed = scored ? Number.parseInt(scored[1], 10) : null;

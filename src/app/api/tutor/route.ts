@@ -1,4 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { notConfigured, provider, streamText } from "@/lib/ai";
+import { clientKey, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,10 @@ const SYSTEM =
 /** Free text reaches the model, so both fields are bounded before they get there. */
 const MAX_QUESTION = 500;
 const MAX_MODE = 400;
+
+/** A learner reads for a while between questions; a script does not. */
+const RATE_LIMIT = 20;
+const RATE_WINDOW_MS = 60_000;
 
 type TutorRequest = {
   lessonTitle: string;
@@ -88,15 +93,16 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json(
-      {
-        error:
-          "The tutor is not configured on this deployment. Set ANTHROPIC_API_KEY to enable it.",
-      },
-      { status: 503 },
-    );
-  }
+  // Checked before the model call, so a flood costs nothing.
+  const limit = rateLimit(
+    `tutor:${clientKey(request)}`,
+    RATE_LIMIT,
+    RATE_WINDOW_MS,
+  );
+  if (!limit.ok) return tooManyRequests(limit.retryAfter, "tutor");
+
+  const configured = provider();
+  if (!configured) return notConfigured("The tutor");
 
   const context = [
     `Lesson: ${body.lessonTitle}`,
@@ -110,30 +116,20 @@ export async function POST(request: Request) {
     ? `The learner asks: "${body.question}"\nAnswer it in the context of this lesson.`
     : body.mode;
 
-  const client = new Anthropic();
-  const stream = client.messages.stream({
-    model: "claude-opus-5",
-    // Thinking is on by default on this model and max_tokens caps thinking plus
-    // response text together, so the budget carries headroom for both: low
-    // effort keeps the thinking short, and 2048 leaves a 220-word answer room
-    // to finish rather than truncating mid-sentence.
-    max_tokens: 2048,
-    output_config: { effort: "low" },
+  // 2048 leaves a 220-word answer room to finish rather than truncating
+  // mid-sentence, with headroom for models that think before answering.
+  const { deltas, abort } = streamText({
     system: SYSTEM,
-    messages: [{ role: "user", content: `${context}\n\n${task}` }],
+    user: `${context}\n\n${task}`,
+    maxTokens: 2048,
   });
 
   const encoder = new TextEncoder();
   const textStream = new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
+        for await (const text of deltas) {
+          controller.enqueue(encoder.encode(text));
         }
       } catch {
         /*
@@ -147,7 +143,7 @@ export async function POST(request: Request) {
     },
     cancel() {
       // The learner navigated away or asked something else — stop paying for this one.
-      stream.controller.abort();
+      abort();
     },
   });
 

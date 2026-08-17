@@ -108,8 +108,10 @@ one environment variable.
 1. Push this repository to GitHub.
 2. In Vercel, **Add New → Project**, import the repository, and accept the
    detected Next.js settings.
-3. Add `ANTHROPIC_API_KEY` under **Settings → Environment Variables** for
-   Production, Preview and Development.
+3. Add `ANTHROPIC_API_KEY` (or `OPENAI_API_KEY`) under **Settings →
+   Environment Variables** for Production, Preview and Development. Either
+   provider works; set `AI_PROVIDER` only if both keys are present and you want
+   to pin one.
 4. Deploy.
 
 Everything except the two AI panels is statically prerendered — 87 lesson pages,
