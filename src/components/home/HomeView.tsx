@@ -123,17 +123,9 @@ export function HomeView({
           while ago and needs to pass the real courses.
         </p>
 
-        <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.1em]">
-          <span className="text-gold border border-gold-line rounded-full px-3.5 py-1.5">
-            Proprietary course
-          </span>
-          <span className="text-ink-faint">
-            Licensed to a single learner · not for redistribution
-          </span>
-        </div>
-
-        {/* The orientation is not examined, so it has to earn its click here or
-            it will never be read. It sits above the rule, before any track. */}
+        {/* The orientation is not examined, so it has to earn its click here
+            or it will never be read — hence a place in the header, ahead of
+            every track. */}
         <Link
           href="/start"
           className="group flex flex-wrap items-baseline gap-x-3 gap-y-1 self-start px-4 py-3 bg-surface border border-line rounded-lg hover:border-accent-line transition-colors"
@@ -148,19 +140,6 @@ export function HomeView({
             →
           </span>
         </Link>
-
-        <div className="flex flex-wrap items-center gap-2.5 font-mono text-[13px] text-ink-faint">
-          <span className="text-ink-muted">The rule:</span>
-          <span>learn</span>
-          <span className="text-ink-ghost">→</span>
-          <span>drill</span>
-          <span className="text-ink-ghost">→</span>
-          <span>pass the exam</span>
-          <span className="text-ink-ghost">→</span>
-          <span className="text-accent">unlock the next track</span>
-          <span className="text-ink-ghost">·</span>
-          <span className="text-gold">fail three times and you redo the lessons</span>
-        </div>
       </header>
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
@@ -171,19 +150,7 @@ export function HomeView({
         <StatTile value={stats.quizQuestions} label="quiz questions" />
       </div>
 
-      <section id="math-atlas" className="flex flex-col gap-4 sm:gap-[18px] scroll-mt-6">
-        <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-1">
-          <Eyebrow>The connected mental model</Eyebrow>
-          <span className="font-mono text-xs text-ink-faint">
-            Every lesson has a definition, a region and a way forward.
-          </span>
-        </div>
-        <p className="text-[17px] sm:text-lg leading-[1.65] text-ink-muted max-w-[70ch]">
-          A timetable cuts mathematics into subjects. Reality does not. The
-          atlas keeps the connections visible: what an idea means, what it rests
-          on, and what new name it takes when it returns in geometry, algorithms
-          or AI.
-        </p>
+      <section id="math-atlas" className="scroll-mt-6">
         <MathAtlas atlas={atlas} />
       </section>
 
@@ -210,7 +177,21 @@ export function HomeView({
         </div>
       </section>
 
-      <TrackSequence tracks={tracks} />
+      <section className="flex flex-col gap-3.5">
+        <div className="flex flex-wrap items-center gap-2.5 font-mono text-[13px] text-ink-faint">
+          <span className="text-ink-muted">The rule:</span>
+          <span>learn</span>
+          <span className="text-ink-ghost">→</span>
+          <span>drill</span>
+          <span className="text-ink-ghost">→</span>
+          <span>pass the exam</span>
+          <span className="text-ink-ghost">→</span>
+          <span className="text-accent">unlock the next track</span>
+          <span className="text-ink-ghost">·</span>
+          <span className="text-gold">fail three times and you redo the lessons</span>
+        </div>
+        <TrackSequence tracks={tracks} />
+      </section>
 
       {queueItems.length > 0 && (
         <section className="flex flex-col gap-4 px-5 py-6 sm:px-7 sm:py-[26px] bg-gold-surface border border-gold-line rounded-[10px]">
