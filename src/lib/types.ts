@@ -57,7 +57,8 @@ export type DemoKey =
   | "riemann"
   | "truthTable"
   | "numberLine"
-  | "inequality";
+  | "inequality"
+  | "unitCircle";
 
 export type Lesson = {
   id: string;

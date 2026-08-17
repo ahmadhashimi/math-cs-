@@ -14,6 +14,7 @@ import { InequalityDemo } from "@/components/lesson/InequalityDemo";
 import { NumberLineDemo } from "@/components/lesson/NumberLineDemo";
 import { RiemannDemo } from "@/components/lesson/RiemannDemo";
 import { TruthTableDemo } from "@/components/lesson/TruthTableDemo";
+import { UnitCircleDemo } from "@/components/lesson/UnitCircleDemo";
 import { TutorPanel } from "@/components/lesson/TutorPanel";
 import { WriteItOut } from "@/components/lesson/WriteItOut";
 import {
@@ -339,6 +340,7 @@ export function LessonView({
       {lesson.demo === "truthTable" && <TruthTableDemo />}
       {lesson.demo === "numberLine" && <NumberLineDemo />}
       {lesson.demo === "inequality" && <InequalityDemo />}
+      {lesson.demo === "unitCircle" && <UnitCircleDemo />}
 
       <WriteItOut
         lessonId={lesson.id}
